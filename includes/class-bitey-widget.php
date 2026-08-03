@@ -7,15 +7,15 @@ if (!defined('ABSPATH')) {
 
 /*
 |--------------------------------------------------------------------------
-| Bitey AI Widget
+| Bitey Chat Widget
 |--------------------------------------------------------------------------
+|
+| Frontend chat interface
+|
 */
 
 
 class Bitey_Widget {
-
-
-    private static $loaded = false;
 
 
 
@@ -24,7 +24,7 @@ class Bitey_Widget {
 
         /*
         |--------------------------------------------------------------------------
-        | Load widget automatically
+        | Render Widget
         |--------------------------------------------------------------------------
         */
 
@@ -34,8 +34,7 @@ class Bitey_Widget {
             array(
                 $this,
                 'render_widget'
-            ),
-            99
+            )
         );
 
 
@@ -45,9 +44,11 @@ class Bitey_Widget {
 
 
 
+
+
     /*
     |--------------------------------------------------------------------------
-    | Render Widget
+    | Output Chat HTML
     |--------------------------------------------------------------------------
     */
 
@@ -57,7 +58,10 @@ class Bitey_Widget {
 
 
         if(
-            is_admin()
+            !get_option(
+                'bitey_enabled',
+                true
+            )
         ){
 
             return;
@@ -67,210 +71,192 @@ class Bitey_Widget {
 
 
 
-        /*
-        Prevent duplicates
-        */
+        ?>
 
 
-        if(
-            self::$loaded
-        ){
-
-            return;
-
-        }
-
-
-
-        self::$loaded = true;
-
-
-
-?>
-
-
-
-<!-- ==========================
-     Bitey AI Button
-========================== -->
-
-
-<button
-
-    id="bitey-button"
-
-    type="button"
-
->
-
-    💬 Bitey AI
-
-</button>
-
-
-
-
-
-
-<!-- ==========================
-     Bitey AI Window
-========================== -->
-
-
-<div
-
-    id="bitey-window"
-
->
-
-
-
-
-
-    <!-- Header -->
-
-    <div
-
-        id="bitey-header"
-
-    >
-
-
-        <span>
-
-            🤖 Bitey AI Assistant
-
-        </span>
-
-
-
+        <!-- Bitey Button -->
 
 
         <button
-
-            id="bitey-close"
-
+            id="bitey-button"
             type="button"
-
         >
 
-            ✕
+            💬 Bitey AI
 
         </button>
 
 
-    </div>
 
 
 
 
 
-
-
-
-
-    <!-- Messages -->
-
-
-    <div
-
-        id="bitey-messages"
-
-    >
-
+        <!-- Bitey Window -->
 
 
         <div
-
-            class="bitey-message bot"
-
+            id="bitey-window"
+            style="display:none;"
         >
 
-            Hola, soy Bitey 🤖
 
-            <br>
 
-            ¿En qué puedo ayudarte?
+
+
+            <!-- Header -->
+
+
+            <div
+                id="bitey-header"
+            >
+
+
+                <span>
+
+                    🤖 Bitey AI Assistant
+
+                </span>
+
+
+
+
+                <button
+
+                    id="bitey-close"
+
+                    type="button"
+
+                >
+
+                    ✕
+
+                </button>
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+            <!-- Messages -->
+
+
+            <div
+                id="bitey-messages"
+            >
+
+
+
+                <div
+                    class="bitey-message bot"
+                >
+
+                    Hola, soy Bitey 🤖
+
+                    <br>
+
+                    ¿En qué puedo ayudarte?
+
+
+                </div>
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+            <!-- Footer -->
+
+
+            <div
+                id="bitey-footer"
+            >
+
+
+
+                <input
+
+                    id="bitey-name"
+
+                    type="text"
+
+                    placeholder="Tu nombre"
+
+                />
+
+
+
+
+
+                <input
+
+                    id="bitey-phone"
+
+                    type="text"
+
+                    placeholder="WhatsApp"
+
+                />
+
+
+
+
+
+
+
+                <input
+
+                    id="bitey-input"
+
+                    type="text"
+
+                    placeholder="Describe tu problema técnico..."
+
+                />
+
+
+
+
+
+                <button
+
+                    id="bitey-send"
+
+                    type="button"
+
+                >
+
+                    Enviar
+
+
+                </button>
+
+
+
+
+            </div>
+
+
+
 
 
         </div>
 
 
 
-    </div>
-
-
-
-
-
-
-
-
-
-    <!-- Footer -->
-
-
-    <div
-
-        id="bitey-footer"
-
-    >
-
-
-
-        <input
-
-
-            id="bitey-input"
-
-
-            type="text"
-
-
-            placeholder="Describe tu problema técnico..."
-
-
-        >
-
-
-
-
-
-
-        <button
-
-
-            id="bitey-send"
-
-
-            type="button"
-
-
-        >
-
-            Enviar
-
-
-        </button>
-
-
-
-
-    </div>
-
-
-
-
-
-
-</div>
-
-
-
-
-
-<?php
-
+        <?php
 
 
     }

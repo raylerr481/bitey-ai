@@ -1,49 +1,60 @@
-(function ($) {
-
-
-console.log("Bitey JS loaded");
-
-
-
 document.addEventListener(
     "DOMContentLoaded",
     function(){
 
 
+        console.log(
+            "Bitey JS loaded"
+        );
 
-        console.log("Bitey DOM loaded");
 
 
-
-        const button = document.getElementById(
+        const button =
+        document.getElementById(
             "bitey-button"
         );
 
 
-        const windowBox = document.getElementById(
+        const windowBox =
+        document.getElementById(
             "bitey-window"
         );
 
 
-        const close = document.getElementById(
+        const close =
+        document.getElementById(
             "bitey-close"
         );
 
 
-        const send = document.getElementById(
+        const send =
+        document.getElementById(
             "bitey-send"
         );
 
 
-        const input = document.getElementById(
+        const input =
+        document.getElementById(
             "bitey-input"
         );
 
 
-        const messages = document.getElementById(
-            "bitey-messages"
+        const nameInput =
+        document.getElementById(
+            "bitey-name"
         );
 
+
+        const phoneInput =
+        document.getElementById(
+            "bitey-phone"
+        );
+
+
+        const messages =
+        document.getElementById(
+            "bitey-messages"
+        );
 
 
 
@@ -60,6 +71,7 @@ document.addEventListener(
 
 
 
+
         console.log(
             "Bitey interface ready"
         );
@@ -70,7 +82,7 @@ document.addEventListener(
 
 
         /*
-        Open Chat
+        Open
         */
 
 
@@ -79,21 +91,11 @@ document.addEventListener(
             function(){
 
 
-                if(windowBox){
+                windowBox.style.display =
+                "flex";
 
 
-                    windowBox.style.display =
-                    "flex";
-
-
-                }
-
-
-                if(input){
-
-                    input.focus();
-
-                }
+                input.focus();
 
 
             }
@@ -105,9 +107,8 @@ document.addEventListener(
 
 
 
-
         /*
-        Close Chat
+        Close
         */
 
 
@@ -137,20 +138,14 @@ document.addEventListener(
 
 
         /*
-        Send Button
+        Send
         */
 
 
-        if(send){
-
-
-            send.addEventListener(
-                "click",
-                sendMessage
-            );
-
-
-        }
+        send.addEventListener(
+            "click",
+            sendMessage
+        );
 
 
 
@@ -158,32 +153,20 @@ document.addEventListener(
 
 
 
-
-        /*
-        Enter key
-        */
-
-
-        if(input){
+        input.addEventListener(
+            "keypress",
+            function(e){
 
 
-            input.addEventListener(
-                "keypress",
-                function(e){
+                if(e.key === "Enter"){
 
-
-                    if(e.key === "Enter"){
-
-                        sendMessage();
-
-                    }
-
+                    sendMessage();
 
                 }
-            );
 
 
-        }
+            }
+        );
 
 
 
@@ -197,18 +180,16 @@ document.addEventListener(
 
 
 
-            let text =
+            const text =
             input.value.trim();
 
 
 
-
-            if(text === ""){
+            if(!text){
 
                 return;
 
             }
-
 
 
 
@@ -227,9 +208,7 @@ document.addEventListener(
 
 
 
-
-
-            let loading =
+            const loading =
             addMessage(
                 "Bitey está pensando 🤖...",
                 "bot loading"
@@ -240,67 +219,75 @@ document.addEventListener(
 
 
 
+            const formData =
+            new FormData();
 
 
-            $.ajax({
+
+            formData.append(
+                "action",
+                "bitey_send_message"
+            );
+
+
+            formData.append(
+                "nonce",
+                bitey_ajax.nonce
+            );
+
+
+            formData.append(
+                "message",
+                text
+            );
+
+
+            formData.append(
+                "name",
+                nameInput.value || "Visitante"
+            );
+
+
+            formData.append(
+                "phone",
+                phoneInput.value || ""
+            );
+
+
+            formData.append(
+                "company_id",
+                bitey_ajax.company_id
+            );
+
+
+            formData.append(
+                "channel",
+                bitey_ajax.channel
+            );
 
 
 
-                url:
+
+
+
+
+            fetch(
                 bitey_ajax.ajax_url,
+                {
 
+                    method:"POST",
 
+                    body:formData
 
-                type:
-                "POST",
+                }
 
-
-
-
-                data:{
-
-
-
-                    action:
-                    "bitey_send_message",
-
-
-
-                    nonce:
-                    bitey_ajax.nonce,
-
-
-
-                    message:
-                    text,
-
-
-
-                    name:
-                    "Visitante",
-
-
-
-                    phone:
-                    "website"
-
-
-                },
-
-
-
-
-
-                success:
-                function(response){
-
-
-
-                    console.log(
-                        "Bitey AJAX:",
-                        response
-                    );
-
+            )
+            .then(
+                response =>
+                response.json()
+            )
+            .then(
+                response => {
 
 
 
@@ -317,65 +304,43 @@ document.addEventListener(
                     if(response.success){
 
 
-
-                        let reply =
-                        response.data.reply
-                        ||
-                        response.data.respuesta
-                        ||
-                        response.data.response
-                        ||
-                        response.data.message
-                        ||
-                        "Bitey no recibió respuesta";
-
-
-
-
-
                         addMessage(
-                            reply,
+
+                            response.data.reply,
+
                             "bot"
+
                         );
-
-
 
 
                     }
                     else{
 
 
-
                         addMessage(
 
-                            "Bitey recibió el mensaje pero no pudo responder.",
+                            "Bitey tuvo un problema procesando la solicitud.",
 
                             "bot"
 
                         );
 
 
-
                     }
 
 
 
-                },
+                }
 
+            )
+            .catch(
 
-
-
-
-                error:
-                function(error){
-
+                error => {
 
 
                     console.error(
-                        "Bitey error:",
                         error
                     );
-
 
 
                     if(loading){
@@ -383,8 +348,6 @@ document.addEventListener(
                         loading.remove();
 
                     }
-
-
 
 
                     addMessage(
@@ -396,13 +359,9 @@ document.addEventListener(
                     );
 
 
-
                 }
 
-
-
-
-            });
+            );
 
 
 
@@ -432,11 +391,11 @@ document.addEventListener(
 
 
 
-            let div =
+
+            const div =
             document.createElement(
                 "div"
             );
-
 
 
 
@@ -446,8 +405,9 @@ document.addEventListener(
 
 
 
-            div.innerHTML =
+            div.textContent =
             text;
+
 
 
 
@@ -455,7 +415,6 @@ document.addEventListener(
             messages.appendChild(
                 div
             );
-
 
 
 
@@ -472,11 +431,6 @@ document.addEventListener(
 
 
 
+
     }
-
-
 );
-
-
-
-})(jQuery);

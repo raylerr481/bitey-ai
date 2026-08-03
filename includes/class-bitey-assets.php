@@ -6,7 +6,18 @@ if (!defined('ABSPATH')) {
 
 
 
+/*
+|--------------------------------------------------------------------------
+| Bitey Assets Manager
+|--------------------------------------------------------------------------
+|
+| Loads Bitey frontend resources
+|
+*/
+
+
 class Bitey_Assets {
+
 
 
     public function __construct(){
@@ -28,17 +39,32 @@ class Bitey_Assets {
 
 
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Load CSS and JS
+    |--------------------------------------------------------------------------
+    */
+
+
     public function load_assets(){
 
 
 
-        $css_file =
+        /*
+        |--------------------------------------------------------------------------
+        | Paths
+        |--------------------------------------------------------------------------
+        */
+
+
+        $css_path =
         BITEY_AI_PATH .
         'assets/css/bitey-style.css';
 
 
 
-        $js_file =
+        $js_path =
         BITEY_AI_PATH .
         'assets/js/bitey-script.js';
 
@@ -50,11 +76,13 @@ class Bitey_Assets {
 
 
         /*
-        CSS
+        |--------------------------------------------------------------------------
+        | CSS
+        |--------------------------------------------------------------------------
         */
 
 
-        if(file_exists($css_file)){
+        if(file_exists($css_path)){
 
 
             wp_enqueue_style(
@@ -66,7 +94,7 @@ class Bitey_Assets {
 
                 array(),
 
-                filemtime($css_file)
+                filemtime($css_path)
 
             );
 
@@ -81,11 +109,13 @@ class Bitey_Assets {
 
 
         /*
-        JavaScript
+        |--------------------------------------------------------------------------
+        | JavaScript
+        |--------------------------------------------------------------------------
         */
 
 
-        if(file_exists($js_file)){
+        if(file_exists($js_path)){
 
 
             wp_enqueue_script(
@@ -95,11 +125,9 @@ class Bitey_Assets {
                 BITEY_AI_URL .
                 'assets/js/bitey-script.js',
 
-                array(
-                    'jquery'
-                ),
+                array(),
 
-                filemtime($js_file),
+                filemtime($js_path),
 
                 true
 
@@ -111,6 +139,13 @@ class Bitey_Assets {
 
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | Data For Frontend
+            |--------------------------------------------------------------------------
+            */
+
+
             wp_localize_script(
 
                 'bitey-ai-script',
@@ -119,16 +154,34 @@ class Bitey_Assets {
 
                 array(
 
+
                     'ajax_url' =>
                     admin_url(
                         'admin-ajax.php'
                     ),
 
 
+
                     'nonce' =>
                     wp_create_nonce(
                         'bitey_nonce'
-                    )
+                    ),
+
+
+
+                    'company_id' =>
+                    1,
+
+
+
+                    'channel' =>
+                    'website',
+
+
+
+                    'version' =>
+                    BITEY_AI_VERSION
+
 
                 )
 
@@ -139,8 +192,8 @@ class Bitey_Assets {
         }
 
 
-
     }
+
 
 
 }

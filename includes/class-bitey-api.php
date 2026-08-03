@@ -10,42 +10,51 @@ if (!defined('ABSPATH')) {
 | Bitey API Connector
 |--------------------------------------------------------------------------
 |
-| Connects WordPress Bitey Plugin with FastAPI Bitey Core
+| WordPress → Bitey Core FastAPI
 |
+| Handles communication between:
+| Website Widget
+|       ↓
+| WordPress
+|       ↓
+| FastAPI
+|       ↓
+| Supabase
+|
+|--------------------------------------------------------------------------
 */
 
 
 class Bitey_API {
 
 
-
     private $api_url;
 
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Constructor
+    |--------------------------------------------------------------------------
+    */
 
 
     public function __construct(){
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Backend URL
-        |--------------------------------------------------------------------------
-        */
-
-
-        $this->api_url = get_option(
-            'bitey_api_url',
-            'http://localhost:8000'
+        $this->api_url = rtrim(
+            get_option(
+                'bitey_api_url',
+                'http://localhost:8000'
+            ),
+            '/'
         );
 
 
 
-
-
         /*
         |--------------------------------------------------------------------------
-        | AJAX Actions
+        | AJAX Endpoints
         |--------------------------------------------------------------------------
         */
 
@@ -57,7 +66,6 @@ class Bitey_API {
                 'send_message'
             )
         );
-
 
 
         add_action(
@@ -76,10 +84,9 @@ class Bitey_API {
 
 
 
-
     /*
     |--------------------------------------------------------------------------
-    | Send Message
+    | Send Message To Bitey Core
     |--------------------------------------------------------------------------
     */
 
@@ -90,14 +97,14 @@ class Bitey_API {
 
         /*
         |--------------------------------------------------------------------------
-        | Security
+        | Security Check
         |--------------------------------------------------------------------------
         */
 
 
         if(
-            isset($_POST['nonce'])
-            &&
+            !isset($_POST['nonce'])
+            ||
             !wp_verify_nonce(
                 $_POST['nonce'],
                 'bitey_nonce'
@@ -109,13 +116,12 @@ class Bitey_API {
 
                 array(
 
-                    'message'=>
+                    'message' =>
                     'Solicitud no autorizada'
 
                 )
 
             );
-
 
         }
 
@@ -126,14 +132,42 @@ class Bitey_API {
 
         /*
         |--------------------------------------------------------------------------
-        | Message
+        | Receive Data
         |--------------------------------------------------------------------------
         */
 
 
         $message = sanitize_text_field(
+
             $_POST['message'] ?? ''
+
         );
+
+
+
+        $name = sanitize_text_field(
+
+            $_POST['name'] ?? 'Visitante'
+
+        );
+
+
+
+        $phone = sanitize_text_field(
+
+            $_POST['phone'] ?? ''
+
+        );
+
+
+
+        $customer_id = intval(
+
+            $_POST['customer_id'] ?? 0
+
+        );
+
+
 
 
 
@@ -145,7 +179,7 @@ class Bitey_API {
 
                 array(
 
-                    'message'=>
+                    'message' =>
                     'Mensaje vacío'
 
                 )
@@ -161,10 +195,9 @@ class Bitey_API {
 
 
 
-
         /*
         |--------------------------------------------------------------------------
-        | Customer
+        | Payload For Bitey Core
         |--------------------------------------------------------------------------
         */
 
@@ -172,23 +205,58 @@ class Bitey_API {
         $payload = array(
 
 
-            'mensagem' =>
-            $message,
+
+            /*
+            Existing customer
+            */
 
 
-            'whatsapp' =>
-            sanitize_text_field(
-                $_POST['phone'] ?? 'website'
-            ),
+            "cliente_id" => $customer_id,
 
 
-            'nome_cliente' =>
-            sanitize_text_field(
-                $_POST['name'] ?? 'Visitante'
-            )
+
+            /*
+            Message
+            */
+
+
+            "mensagem" => $message,
+
+
+
+            /*
+            Customer data
+            */
+
+
+            "nome_cliente" => $name,
+
+
+            "whatsapp" => $phone,
+
+
+
+            /*
+            Channel identification
+            */
+
+
+            "canal" => "website",
+
+
+
+            /*
+            Multi company support
+            */
+
+
+            "company_id" => 1
+
 
 
         );
+
+
 
 
 
@@ -198,43 +266,38 @@ class Bitey_API {
 
         /*
         |--------------------------------------------------------------------------
-        | Request FastAPI
+        | Send Request
         |--------------------------------------------------------------------------
         */
 
 
         $response = wp_remote_post(
 
-
             $this->api_url . '/chat',
-
 
             array(
 
+                'headers' => array(
 
-                'headers'=>array(
-
-                    'Content-Type'=>
+                    'Content-Type' =>
                     'application/json'
 
                 ),
 
 
+                'body' => wp_json_encode(
 
-                'body'=>
-                wp_json_encode(
                     $payload
+
                 ),
 
 
-
-                'timeout'=>30
-
+                'timeout' => 30
 
             )
 
-
         );
+
 
 
 
@@ -258,8 +321,12 @@ class Bitey_API {
 
                 array(
 
-                    'message'=>
-                    'No se pudo conectar con Bitey Backend'
+                    'message' =>
+                    'No fue posible conectar con Bitey Core',
+
+
+                    'error' =>
+                    $response->get_error_message()
 
                 )
 
@@ -277,29 +344,32 @@ class Bitey_API {
 
         /*
         |--------------------------------------------------------------------------
-        | Read Response
+        | Response Data
         |--------------------------------------------------------------------------
         */
 
 
-        $status =
-        wp_remote_retrieve_response_code(
+        $status = wp_remote_retrieve_response_code(
+
             $response
+
         );
 
 
 
-        $body =
-        wp_remote_retrieve_body(
-            $response
-        );
+        $body = wp_remote_retrieve_body(
 
+            $response
+
+        );
 
 
 
 
         error_log(
-            'BITEY RESPONSE: ' . $body
+
+            'BITEY CORE RESPONSE: ' . $body
+
         );
 
 
@@ -315,48 +385,16 @@ class Bitey_API {
 
                 array(
 
-                    'message'=>
-                    'Error del servidor Bitey',
-
-                    'status'=>
-                    $status
-
-                )
-
-            );
+                    'message' =>
+                    'Bitey Core devolvió un error',
 
 
-        }
+                    'status' =>
+                    $status,
 
 
-
-
-
-
-
-
-        $data = json_decode(
-            $body,
-            true
-        );
-
-
-
-
-
-
-
-        if(
-            !is_array($data)
-        ){
-
-
-            wp_send_json_error(
-
-                array(
-
-                    'message'=>
-                    'Respuesta inválida del backend'
+                    'response' =>
+                    $body
 
                 )
 
@@ -364,6 +402,8 @@ class Bitey_API {
 
 
         }
+
+
 
 
 
@@ -373,7 +413,51 @@ class Bitey_API {
 
         /*
         |--------------------------------------------------------------------------
-        | Normalize Response
+        | Decode JSON
+        |--------------------------------------------------------------------------
+        */
+
+
+        $data = json_decode(
+
+            $body,
+
+            true
+
+        );
+
+
+
+
+
+
+        if(!is_array($data)){
+
+
+            wp_send_json_error(
+
+                array(
+
+                    'message' =>
+                    'Respuesta inválida desde Bitey Core'
+
+                )
+
+            );
+
+
+        }
+
+
+
+
+
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Extract Reply
         |--------------------------------------------------------------------------
         */
 
@@ -406,22 +490,15 @@ class Bitey_API {
 
 
         }
-        elseif(isset($data['message'])){
-
-
-            $reply =
-            $data['message'];
-
-
-        }
         else{
 
 
             $reply =
-            'Recibí tu mensaje, pero no tengo una respuesta disponible.';
+            'Bitey recibió tu mensaje correctamente.';
 
 
         }
+
 
 
 
@@ -431,7 +508,7 @@ class Bitey_API {
 
         /*
         |--------------------------------------------------------------------------
-        | Return To Widget
+        | Return To Javascript Widget
         |--------------------------------------------------------------------------
         */
 
@@ -440,20 +517,33 @@ class Bitey_API {
 
             array(
 
-                'reply'=>
+
+                "reply" =>
                 $reply,
 
-                'raw'=>
+
+                "intent" =>
+                $data['intent'] ?? null,
+
+
+                "service_id" =>
+                $data['service_id'] ?? null,
+
+
+                "ticket_id" =>
+                $data['ticket_id'] ?? null,
+
+
+                "raw" =>
                 $data
+
 
             )
 
         );
 
 
-
     }
-
 
 
 }
