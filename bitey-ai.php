@@ -3,7 +3,7 @@
 Plugin Name: Bitey AI Assistant
 Plugin URI: https://www.bitefixes.com
 Description: Asistente inteligente Bitey conectado al backend FastAPI de BiteFixes.
-Version: 1.0.0
+Version: 1.0.1
 Author: BiteFixes
 Author URI: https://www.bitefixes.com
 License: GPL2
@@ -11,16 +11,10 @@ Text Domain: bitey-ai-assistant
 */
 
 
-/*
-|--------------------------------------------------------------------------
-| Security
-|--------------------------------------------------------------------------
-*/
-
-
 if (!defined('ABSPATH')) {
     exit;
 }
+
 
 
 /*
@@ -32,7 +26,7 @@ if (!defined('ABSPATH')) {
 
 define(
     'BITEY_AI_VERSION',
-    '1.0.0'
+    '1.0.1'
 );
 
 
@@ -54,9 +48,13 @@ define(
 );
 
 
+
+
+
+
 /*
 |--------------------------------------------------------------------------
-| Load Required Classes
+| Load Plugin Classes
 |--------------------------------------------------------------------------
 */
 
@@ -64,7 +62,7 @@ define(
 function bitey_ai_load_classes(){
 
 
-    $files = array(
+    $classes = array(
 
         'class-bitey-assets.php',
 
@@ -75,120 +73,46 @@ function bitey_ai_load_classes(){
     );
 
 
-    foreach($files as $file){
+
+    foreach($classes as $class){
 
 
-        $path = BITEY_AI_PATH . 'includes/' . $file;
+        $file = BITEY_AI_PATH . 'includes/' . $class;
 
 
-        if(file_exists($path)){
 
-            require_once $path;
+        if(file_exists($file)){
+
+
+            require_once $file;
+
 
         }
 
+
     }
 
 
 }
 
 
-bitey_ai_load_classes();
 
-
-
-/*
-|--------------------------------------------------------------------------
-| Plugin Activation
-|--------------------------------------------------------------------------
-*/
-
-
-register_activation_hook(
-    __FILE__,
-    'bitey_ai_activate'
+add_action(
+    'plugins_loaded',
+    'bitey_ai_load_classes'
 );
 
 
 
-function bitey_ai_activate(){
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Default Settings
-    |--------------------------------------------------------------------------
-    */
-
-
-    if(!get_option('bitey_api_url')){
-
-
-        add_option(
-            'bitey_api_url',
-            'https://api.bitefixes.com'
-        );
-
-
-    }
-
-
-
-    if(!get_option('bitey_enabled')){
-
-
-        add_option(
-            'bitey_enabled',
-            true
-        );
-
-
-    }
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Flush Rewrite Rules
-    |--------------------------------------------------------------------------
-    */
-
-
-    flush_rewrite_rules();
-
-
-}
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Plugin Deactivation
-|--------------------------------------------------------------------------
-*/
-
-
-register_deactivation_hook(
-    __FILE__,
-    'bitey_ai_deactivate'
-);
-
-
-
-function bitey_ai_deactivate(){
-
-
-    flush_rewrite_rules();
-
-
-}
 
 
 
 
 /*
 |--------------------------------------------------------------------------
-| Initialize Bitey AI
+| Initialize Bitey AI Components
 |--------------------------------------------------------------------------
 */
 
@@ -199,7 +123,7 @@ function bitey_ai_init(){
 
     /*
     |--------------------------------------------------------------------------
-    | Assets Manager
+    | Assets
     |--------------------------------------------------------------------------
     */
 
@@ -211,6 +135,8 @@ function bitey_ai_init(){
 
 
     }
+
+
 
 
 
@@ -233,6 +159,8 @@ function bitey_ai_init(){
 
 
 
+
+
     /*
     |--------------------------------------------------------------------------
     | Chat Widget
@@ -250,14 +178,143 @@ function bitey_ai_init(){
 
 
 
+
 }
 
 
 
 add_action(
-    'plugins_loaded',
+    'init',
     'bitey_ai_init'
 );
+
+
+
+
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Plugin Activation
+|--------------------------------------------------------------------------
+*/
+
+
+register_activation_hook(
+    __FILE__,
+    'bitey_ai_activate'
+);
+
+
+
+
+function bitey_ai_activate(){
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Backend URL
+    |--------------------------------------------------------------------------
+    */
+
+
+    if(
+        !get_option(
+            'bitey_api_url'
+        )
+    ){
+
+
+        add_option(
+
+            'bitey_api_url',
+
+            'http://127.0.0.1:8000'
+
+        );
+
+
+    }
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Enable Plugin
+    |--------------------------------------------------------------------------
+    */
+
+
+    if(
+        !get_option(
+            'bitey_enabled'
+        )
+    ){
+
+
+        add_option(
+
+            'bitey_enabled',
+
+            true
+
+        );
+
+
+    }
+
+
+
+
+
+
+    flush_rewrite_rules();
+
+
+}
+
+
+
+
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Plugin Deactivation
+|--------------------------------------------------------------------------
+*/
+
+
+register_deactivation_hook(
+    __FILE__,
+    'bitey_ai_deactivate'
+);
+
+
+
+
+function bitey_ai_deactivate(){
+
+
+    flush_rewrite_rules();
+
+
+}
+
+
+
+
+
 
 
 
@@ -272,20 +329,39 @@ add_action(
 function bitey_ai_admin_notice(){
 
 
-    if(!get_option('bitey_api_url')){
+
+    $api_url = get_option(
+        'bitey_api_url'
+    );
 
 
-        echo '<div class="notice notice-warning">
-        <p>
-        Bitey AI necesita configurar la conexión con FastAPI.
-        </p>
-        </div>';
+
+    if(empty($api_url)){
+
+
+
+        echo '
+
+        <div class="notice notice-warning">
+
+            <p>
+
+            Bitey AI necesita configurar la conexión con FastAPI.
+
+            </p>
+
+        </div>
+
+        ';
+
 
 
     }
 
 
+
 }
+
 
 
 add_action(
