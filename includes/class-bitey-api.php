@@ -1,549 +1,436 @@
-<?php
-
-if (!defined('ABSPATH')) {
-    exit;
-}
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
 
 
-/*
-|--------------------------------------------------------------------------
-| Bitey API Connector
-|--------------------------------------------------------------------------
-|
-| WordPress → Bitey Core FastAPI
-|
-| Handles communication between:
-| Website Widget
-|       ↓
-| WordPress
-|       ↓
-| FastAPI
-|       ↓
-| Supabase
-|
-|--------------------------------------------------------------------------
-*/
-
-
-class Bitey_API {
-
-
-    private $api_url;
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Constructor
-    |--------------------------------------------------------------------------
-    */
-
-
-    public function __construct(){
-
-
-        $this->api_url = rtrim(
-            get_option(
-                'bitey_api_url',
-                'http://localhost:8000'
-            ),
-            '/'
+        console.log(
+            "Bitey JS loaded"
         );
+
+
+
+        const button =
+        document.getElementById(
+            "bitey-button"
+        );
+
+
+        const windowBox =
+        document.getElementById(
+            "bitey-window"
+        );
+
+
+        const close =
+        document.getElementById(
+            "bitey-close"
+        );
+
+
+        const send =
+        document.getElementById(
+            "bitey-send"
+        );
+
+
+        const input =
+        document.getElementById(
+            "bitey-input"
+        );
+
+
+        const nameInput =
+        document.getElementById(
+            "bitey-name"
+        );
+
+
+        const phoneInput =
+        document.getElementById(
+            "bitey-phone"
+        );
+
+
+        const messages =
+        document.getElementById(
+            "bitey-messages"
+        );
+
+
+
+
+        if(!button){
+
+            console.error(
+                "Bitey button not found"
+            );
+
+            return;
+
+        }
+
+
+
+
+        console.log(
+            "Bitey interface ready"
+        );
+
+
+
 
 
 
         /*
-        |--------------------------------------------------------------------------
-        | AJAX Endpoints
-        |--------------------------------------------------------------------------
+        Open
         */
 
 
-        add_action(
-            'wp_ajax_bitey_send_message',
-            array(
-                $this,
-                'send_message'
-            )
+        button.addEventListener(
+            "click",
+            function(){
+
+
+                windowBox.style.display =
+                "flex";
+
+
+                input.focus();
+
+
+            }
         );
 
 
-        add_action(
-            'wp_ajax_nopriv_bitey_send_message',
-            array(
-                $this,
-                'send_message'
-            )
-        );
 
 
-    }
-
-
-
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Send Message To Bitey Core
-    |--------------------------------------------------------------------------
-    */
-
-
-    public function send_message(){
 
 
 
         /*
-        |--------------------------------------------------------------------------
-        | Security Check
-        |--------------------------------------------------------------------------
+        Close
         */
 
 
-        if(
-            !isset($_POST['nonce'])
-            ||
-            !wp_verify_nonce(
-                $_POST['nonce'],
-                'bitey_nonce'
+        if(close){
+
+
+            close.addEventListener(
+                "click",
+                function(){
+
+
+                    windowBox.style.display =
+                    "none";
+
+
+                }
+            );
+
+
+        }
+
+
+
+
+
+
+
+
+        /*
+        Send
+        */
+
+
+        send.addEventListener(
+            "click",
+            sendMessage
+        );
+
+
+
+
+
+
+
+        input.addEventListener(
+            "keypress",
+            function(e){
+
+
+                if(e.key === "Enter"){
+
+                    sendMessage();
+
+                }
+
+
+            }
+        );
+
+
+
+
+
+
+
+
+
+        function sendMessage(){
+
+
+
+            const text =
+            input.value.trim();
+
+
+
+            if(!text){
+
+                return;
+
+            }
+
+
+
+
+
+            addMessage(
+                text,
+                "user"
+            );
+
+
+
+            input.value = "";
+
+
+
+
+
+            const loading =
+            addMessage(
+                "Bitey está pensando 🤖...",
+                "bot loading"
+            );
+
+
+
+
+
+
+            const formData =
+            new FormData();
+
+
+
+            formData.append(
+                "action",
+                "bitey_send_message"
+            );
+
+
+            formData.append(
+                "nonce",
+                bitey_ajax.nonce
+            );
+
+
+            formData.append(
+                "message",
+                text
+            );
+
+
+            formData.append(
+                "name",
+                nameInput.value || "Visitante"
+            );
+
+
+            formData.append(
+                "phone",
+                phoneInput.value || ""
+            );
+
+
+            formData.append(
+                "company_id",
+                bitey_ajax.company_id
+            );
+
+
+            formData.append(
+                "channel",
+                bitey_ajax.channel
+            );
+
+
+
+
+
+
+
+            fetch(
+                bitey_ajax.ajax_url,
+                {
+
+                    method:"POST",
+
+                    body:formData
+
+                }
+
             )
+            .then(
+                response =>
+                response.json()
+            )
+            .then(
+                response => {
+
+
+
+                    if(loading){
+
+                        loading.remove();
+
+                    }
+
+
+
+
+
+                    if(response.success){
+
+
+                        addMessage(
+
+                            response.data.reply,
+
+                            "bot"
+
+                        );
+
+
+                    }
+                    else{
+
+
+                        addMessage(
+
+                            "Bitey tuvo un problema procesando la solicitud.",
+
+                            "bot"
+
+                        );
+
+
+                    }
+
+
+
+                }
+
+            )
+            .catch(
+
+                error => {
+
+
+                    console.error(
+                        error
+                    );
+
+
+                    if(loading){
+
+                        loading.remove();
+
+                    }
+
+
+                    addMessage(
+
+                        "Error conectando con Bitey Backend.",
+
+                        "bot"
+
+                    );
+
+
+                }
+
+            );
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+        function addMessage(
+            text,
+            type
         ){
 
 
-            wp_send_json_error(
 
-                array(
+            if(!messages){
 
-                    'message' =>
-                    'Solicitud no autorizada'
+                return;
 
-                )
-
-            );
-
-        }
+            }
 
 
 
 
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Receive Data
-        |--------------------------------------------------------------------------
-        */
-
-
-        $message = sanitize_text_field(
-
-            $_POST['message'] ?? ''
-
-        );
-
-
-
-        $name = sanitize_text_field(
-
-            $_POST['name'] ?? 'Visitante'
-
-        );
-
-
-
-        $phone = sanitize_text_field(
-
-            $_POST['phone'] ?? ''
-
-        );
-
-
-
-        $customer_id = intval(
-
-            $_POST['customer_id'] ?? 0
-
-        );
-
-
-
-
-
-
-        if(empty($message)){
-
-
-            wp_send_json_error(
-
-                array(
-
-                    'message' =>
-                    'Mensaje vacío'
-
-                )
-
+            const div =
+            document.createElement(
+                "div"
             );
 
 
-        }
 
+            div.className =
+            "bitey-message " + type;
 
 
 
 
+            div.textContent =
+            text;
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Payload For Bitey Core
-        |--------------------------------------------------------------------------
-        */
 
 
-        $payload = array(
 
-
-
-            /*
-            Existing customer
-            */
-
-
-            "cliente_id" => $customer_id,
-
-
-
-            /*
-            Message
-            */
-
-
-            "mensagem" => $message,
-
-
-
-            /*
-            Customer data
-            */
-
-
-            "nome_cliente" => $name,
-
-
-            "whatsapp" => $phone,
-
-
-
-            /*
-            Channel identification
-            */
-
-
-            "canal" => "website",
-
-
-
-            /*
-            Multi company support
-            */
-
-
-            "company_id" => 1
-
-
-
-        );
-
-
-
-
-
-
-
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Send Request
-        |--------------------------------------------------------------------------
-        */
-
-
-        $response = wp_remote_post(
-
-            $this->api_url . '/chat',
-
-            array(
-
-                'headers' => array(
-
-                    'Content-Type' =>
-                    'application/json'
-
-                ),
-
-
-                'body' => wp_json_encode(
-
-                    $payload
-
-                ),
-
-
-                'timeout' => 30
-
-            )
-
-        );
-
-
-
-
-
-
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Connection Error
-        |--------------------------------------------------------------------------
-        */
-
-
-        if(
-            is_wp_error($response)
-        ){
-
-
-            wp_send_json_error(
-
-                array(
-
-                    'message' =>
-                    'No fue posible conectar con Bitey Core',
-
-
-                    'error' =>
-                    $response->get_error_message()
-
-                )
-
+            messages.appendChild(
+                div
             );
 
 
-        }
+
+            messages.scrollTop =
+            messages.scrollHeight;
 
 
 
-
-
-
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Response Data
-        |--------------------------------------------------------------------------
-        */
-
-
-        $status = wp_remote_retrieve_response_code(
-
-            $response
-
-        );
-
-
-
-        $body = wp_remote_retrieve_body(
-
-            $response
-
-        );
-
-
-
-
-        error_log(
-
-            'BITEY CORE RESPONSE: ' . $body
-
-        );
-
-
-
-
-
-
-
-        if($status !== 200){
-
-
-            wp_send_json_error(
-
-                array(
-
-                    'message' =>
-                    'Bitey Core devolvió un error',
-
-
-                    'status' =>
-                    $status,
-
-
-                    'response' =>
-                    $body
-
-                )
-
-            );
+            return div;
 
 
         }
 
 
 
-
-
-
-
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Decode JSON
-        |--------------------------------------------------------------------------
-        */
-
-
-        $data = json_decode(
-
-            $body,
-
-            true
-
-        );
-
-
-
-
-
-
-        if(!is_array($data)){
-
-
-            wp_send_json_error(
-
-                array(
-
-                    'message' =>
-                    'Respuesta inválida desde Bitey Core'
-
-                )
-
-            );
-
-
-        }
-
-
-
-
-
-
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Extract Reply
-        |--------------------------------------------------------------------------
-        */
-
-
-        $reply = '';
-
-
-
-        if(isset($data['respuesta'])){
-
-
-            $reply =
-            $data['respuesta'];
-
-
-        }
-        elseif(isset($data['response'])){
-
-
-            $reply =
-            $data['response'];
-
-
-        }
-        elseif(isset($data['reply'])){
-
-
-            $reply =
-            $data['reply'];
-
-
-        }
-        else{
-
-
-            $reply =
-            'Bitey recibió tu mensaje correctamente.';
-
-
-        }
-
-
-
-
-
-
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Return To Javascript Widget
-        |--------------------------------------------------------------------------
-        */
-
-
-        wp_send_json_success(
-
-            array(
-
-
-                "reply" =>
-                $reply,
-
-
-                "intent" =>
-                $data['intent'] ?? null,
-
-
-                "service_id" =>
-                $data['service_id'] ?? null,
-
-
-                "ticket_id" =>
-                $data['ticket_id'] ?? null,
-
-
-                "raw" =>
-                $data
-
-
-            )
-
-        );
 
 
     }
-
-
-}
+);

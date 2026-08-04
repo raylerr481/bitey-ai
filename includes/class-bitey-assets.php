@@ -5,18 +5,17 @@ if (!defined('ABSPATH')) {
 }
 
 
-
 /*
 |--------------------------------------------------------------------------
-| Bitey Assets Manager
+| Bitey Widget
 |--------------------------------------------------------------------------
 |
-| Loads Bitey frontend resources
+| Frontend Chat Interface
 |
 */
 
 
-class Bitey_Assets {
+class Bitey_Widget {
 
 
 
@@ -24,10 +23,10 @@ class Bitey_Assets {
 
 
         add_action(
-            'wp_enqueue_scripts',
+            'wp_footer',
             array(
                 $this,
-                'load_assets'
+                'render'
             )
         );
 
@@ -38,69 +37,63 @@ class Bitey_Assets {
 
 
 
+    public function render(){
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Load CSS and JS
-    |--------------------------------------------------------------------------
-    */
+        ?>
 
 
-    public function load_assets(){
+        <div id="bitey-container">
 
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Paths
-        |--------------------------------------------------------------------------
-        */
+            <!-- Floating Button -->
 
+            <button 
+                id="bitey-button"
+                class="bitey-button"
+                type="button">
 
-        $css_path =
-        BITEY_AI_PATH .
-        'assets/css/bitey-style.css';
+                🤖
 
+            </button>
 
 
-        $js_path =
-        BITEY_AI_PATH .
-        'assets/js/bitey-script.js';
 
 
 
 
 
+            <!-- Chat Window -->
 
 
+            <div 
+                id="bitey-window"
+                class="bitey-window"
+                style="display:none;">
 
-        /*
-        |--------------------------------------------------------------------------
-        | CSS
-        |--------------------------------------------------------------------------
-        */
 
 
-        if(file_exists($css_path)){
 
 
-            wp_enqueue_style(
+                <div class="bitey-header">
 
-                'bitey-ai-style',
 
-                BITEY_AI_URL .
-                'assets/css/bitey-style.css',
+                    <span>
+                        Bitey AI
+                    </span>
 
-                array(),
 
-                filemtime($css_path)
+                    <button
+                        id="bitey-close"
+                        type="button">
 
-            );
+                        ×
 
+                    </button>
 
-        }
 
+                </div>
 
 
 
@@ -108,88 +101,117 @@ class Bitey_Assets {
 
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | JavaScript
-        |--------------------------------------------------------------------------
-        */
 
+                <div 
+                    id="bitey-messages"
+                    class="bitey-messages">
 
-        if(file_exists($js_path)){
 
+                    <div class="bitey-message bot">
 
-            wp_enqueue_script(
+                        Hola 👋 soy Bitey.
+                        ¿Cómo puedo ayudarte?
 
-                'bitey-ai-script',
+                    </div>
 
-                BITEY_AI_URL .
-                'assets/js/bitey-script.js',
 
-                array(),
+                </div>
 
-                filemtime($js_path),
 
-                true
 
-            );
 
 
 
 
 
 
+                <div class="bitey-user-data">
 
-            /*
-            |--------------------------------------------------------------------------
-            | Data For Frontend
-            |--------------------------------------------------------------------------
-            */
 
 
-            wp_localize_script(
+                    <input
 
-                'bitey-ai-script',
+                        id="bitey-name"
 
-                'bitey_ajax',
+                        type="text"
 
-                array(
+                        placeholder="Tu nombre"
 
+                    />
 
-                    'ajax_url' =>
-                    admin_url(
-                        'admin-ajax.php'
-                    ),
 
 
 
-                    'nonce' =>
-                    wp_create_nonce(
-                        'bitey_nonce'
-                    ),
+                    <input
 
+                        id="bitey-phone"
 
+                        type="text"
 
-                    'company_id' =>
-                    1,
+                        placeholder="WhatsApp"
 
+                    />
 
 
-                    'channel' =>
-                    'website',
 
+                </div>
 
 
-                    'version' =>
-                    BITEY_AI_VERSION
 
 
-                )
 
-            );
 
 
 
-        }
+
+                <div class="bitey-input-area">
+
+
+                    <input
+
+                        id="bitey-input"
+
+                        type="text"
+
+                        placeholder="Escribe tu mensaje..."
+
+                    />
+
+
+
+
+                    <button
+
+                        id="bitey-send"
+
+                        type="button">
+
+
+                        Enviar
+
+
+                    </button>
+
+
+
+                </div>
+
+
+
+
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+        <?php
 
 
     }

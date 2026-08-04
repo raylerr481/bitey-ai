@@ -7,10 +7,10 @@ if (!defined('ABSPATH')) {
 
 /*
 |--------------------------------------------------------------------------
-| Bitey Chat Widget
+| Bitey Widget
 |--------------------------------------------------------------------------
 |
-| Frontend chat interface
+| Frontend Chat Interface
 |
 */
 
@@ -22,18 +22,11 @@ class Bitey_Widget {
     public function __construct(){
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Render Widget
-        |--------------------------------------------------------------------------
-        */
-
-
         add_action(
             'wp_footer',
             array(
                 $this,
-                'render_widget'
+                'render'
             )
         );
 
@@ -44,98 +37,26 @@ class Bitey_Widget {
 
 
 
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Output Chat HTML
-    |--------------------------------------------------------------------------
-    */
-
-
-    public function render_widget(){
-
-
-
-        if(
-            !get_option(
-                'bitey_enabled',
-                true
-            )
-        ){
-
-            return;
-
-        }
-
-
+    public function render(){
 
 
         ?>
 
 
-        <!-- Bitey Button -->
-
-
-        <button
-            id="bitey-button"
-            type="button"
-        >
-
-            💬 Bitey AI
-
-        </button>
+        <div id="bitey-container">
 
 
 
+            <!-- Floating Button -->
 
+            <button 
+                id="bitey-button"
+                class="bitey-button"
+                type="button">
 
+                🤖
 
-
-        <!-- Bitey Window -->
-
-
-        <div
-            id="bitey-window"
-            style="display:none;"
-        >
-
-
-
-
-
-            <!-- Header -->
-
-
-            <div
-                id="bitey-header"
-            >
-
-
-                <span>
-
-                    🤖 Bitey AI Assistant
-
-                </span>
-
-
-
-
-                <button
-
-                    id="bitey-close"
-
-                    type="button"
-
-                >
-
-                    ✕
-
-                </button>
-
-
-
-            </div>
+            </button>
 
 
 
@@ -143,116 +64,150 @@ class Bitey_Widget {
 
 
 
-
-            <!-- Messages -->
-
-
-            <div
-                id="bitey-messages"
-            >
+            <!-- Chat Window -->
 
 
+            <div 
+                id="bitey-window"
+                class="bitey-window"
+                style="display:none;">
 
-                <div
-                    class="bitey-message bot"
-                >
 
-                    Hola, soy Bitey 🤖
 
-                    <br>
 
-                    ¿En qué puedo ayudarte?
+
+                <div class="bitey-header">
+
+
+                    <span>
+                        Bitey AI
+                    </span>
+
+
+                    <button
+                        id="bitey-close"
+                        type="button">
+
+                        ×
+
+                    </button>
 
 
                 </div>
 
 
 
+
+
+
+
+
+                <div 
+                    id="bitey-messages"
+                    class="bitey-messages">
+
+
+                    <div class="bitey-message bot">
+
+                        Hola 👋 soy Bitey.
+                        ¿Cómo puedo ayudarte?
+
+                    </div>
+
+
+                </div>
+
+
+
+
+
+
+
+
+
+                <div class="bitey-user-data">
+
+
+
+                    <input
+
+                        id="bitey-name"
+
+                        type="text"
+
+                        placeholder="Tu nombre"
+
+                    />
+
+
+
+
+                    <input
+
+                        id="bitey-phone"
+
+                        type="text"
+
+                        placeholder="WhatsApp"
+
+                    />
+
+
+
+                </div>
+
+
+
+
+
+
+
+
+
+                <div class="bitey-input-area">
+
+
+                    <input
+
+                        id="bitey-input"
+
+                        type="text"
+
+                        placeholder="Escribe tu mensaje..."
+
+                    />
+
+
+
+
+                    <button
+
+                        id="bitey-send"
+
+                        type="button">
+
+
+                        Enviar
+
+
+                    </button>
+
+
+
+                </div>
+
+
+
+
+
+
+
             </div>
-
-
-
-
-
-
-
-
-            <!-- Footer -->
-
-
-            <div
-                id="bitey-footer"
-            >
-
-
-
-                <input
-
-                    id="bitey-name"
-
-                    type="text"
-
-                    placeholder="Tu nombre"
-
-                />
-
-
-
-
-
-                <input
-
-                    id="bitey-phone"
-
-                    type="text"
-
-                    placeholder="WhatsApp"
-
-                />
-
-
-
-
-
-
-
-                <input
-
-                    id="bitey-input"
-
-                    type="text"
-
-                    placeholder="Describe tu problema técnico..."
-
-                />
-
-
-
-
-
-                <button
-
-                    id="bitey-send"
-
-                    type="button"
-
-                >
-
-                    Enviar
-
-
-                </button>
-
-
-
-
-            </div>
-
-
 
 
 
         </div>
+
 
 
 
