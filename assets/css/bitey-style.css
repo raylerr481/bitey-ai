@@ -17,43 +17,65 @@
     align-items: center;
     justify-content: center;
     background: #2563eb;
-    color: white;
+    color: #fff;
     box-shadow: 0 5px 15px rgba(0, 0, 0, .25);
 }
 
-.bitey-button:hover {
-    transform: scale(1.05);
-}
+.bitey-button:hover { transform: scale(1.05); }
 
 .bitey-window {
-    width: 350px;
-    height: 500px;
-    background: white;
+    width: 360px;
+    height: 540px;
+    background: #fff;
     border-radius: 15px;
     position: absolute;
     right: 0;
     bottom: 75px;
+    display: flex;
     flex-direction: column;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
 }
 
+.bitey-window[hidden] { display: none !important; }
+
 .bitey-header {
     background: #2563eb;
-    color: white;
+    color: #fff;
     padding: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-weight: bold;
 }
+
+.bitey-header strong,
+.bitey-header small { display: block; }
+.bitey-header small { margin-top: 3px; opacity: .85; font-weight: normal; }
 
 .bitey-header button {
     background: none;
     border: none;
-    color: white;
+    color: #fff;
     font-size: 22px;
     cursor: pointer;
+}
+
+.bitey-language {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #fff;
+    font-size: 12px;
+}
+
+.bitey-language select {
+    padding: 5px 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background: #fff;
 }
 
 .bitey-messages {
@@ -72,68 +94,21 @@
     word-break: break-word;
 }
 
-.bitey-message.bitey-user {
-    background: #2563eb;
-    color: white;
-    margin-left: auto;
-}
+.bitey-message.bitey-user { background: #2563eb; color: #fff; margin-left: auto; }
+.bitey-message.bitey-ai { background: #e5e7eb; color: #111827; }
+.bitey-message.bitey-error { background: #fee2e2; color: #991b1b; }
+.bitey-typing { opacity: .7; }
 
-.bitey-message.bitey-ai {
-    background: #e5e7eb;
-    color: #111827;
-}
+.bitey-user-data { padding: 10px 10px 5px; display: flex; gap: 5px; }
+.bitey-user-data input { width: 50%; min-width: 0; padding: 8px; border: 1px solid #ddd; border-radius: 8px; }
 
-.bitey-user-data {
-    padding: 10px;
-    display: flex;
-    gap: 5px;
-}
-
-.bitey-user-data input {
-    width: 50%;
-    min-width: 0;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-}
-
-.bitey-input-area {
-    display: flex;
-    padding: 10px;
-    border-top: 1px solid #ddd;
-    gap: 5px;
-}
-
-.bitey-input-area input {
-    flex: 1;
-    min-width: 0;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-}
-
-.bitey-input-area button {
-    background: #2563eb;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.bitey-input-area button:disabled {
-    opacity: .6;
-    cursor: wait;
-}
+.bitey-input-area { display: flex; padding: 10px; border-top: 1px solid #ddd; gap: 5px; }
+.bitey-input-area input { flex: 1; min-width: 0; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
+.bitey-input-area button { background: #2563eb; color: #fff; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; }
+.bitey-input-area button:disabled { opacity: .6; cursor: wait; }
+.bitey-status { min-height: 18px; padding: 0 10px 8px; font-size: 11px; color: #991b1b; }
 
 @media (max-width: 600px) {
-    #bitey-container {
-        right: 15px;
-        bottom: 15px;
-    }
-
-    .bitey-window {
-        width: min(90vw, 350px);
-        height: min(70vh, 500px);
-    }
+    #bitey-container { right: 15px; bottom: 15px; }
+    .bitey-window { width: min(92vw, 360px); height: min(72vh, 540px); }
 }
