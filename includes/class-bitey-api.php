@@ -17,21 +17,40 @@ class Bitey_API {
         return rtrim($url, '/') . '/chat';
     }
 
+    private function client_key() {
+        $ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : 'unknown';
+        return 'bitey_rate_' . md5($ip);
+    }
+
+    private function rate_limit() {
+        $key = $this->client_key();
+        $count = (int) get_transient($key);
+        if ($count >= 20) {
+            wp_send_json_error(array(
+                'reply' => 'Has enviado varios mensajes en poco tiempo. Espera un momento e inténtalo de nuevo.',
+            ), 429);
+        }
+        set_transient($key, $count + 1, MINUTE_IN_SECONDS);
+    }
+
     public function process_message() {
         check_ajax_referer('bitey_nonce', 'nonce');
+        $this->rate_limit();
 
         $message = isset($_POST['message']) ? sanitize_textarea_field(wp_unslash($_POST['message'])) : '';
         $name = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : 'Visitor';
         $phone = isset($_POST['phone']) ? sanitize_text_field(wp_unslash($_POST['phone'])) : '';
-        $company_id = isset($_POST['company_id']) ? absint($_POST['company_id']) : 1;
-        $channel = isset($_POST['channel']) ? sanitize_key(wp_unslash($_POST['channel'])) : 'website';
 
-        if ($message === '') {
-            wp_send_json_error(array('reply' => 'Escribe un mensaje para Bitey.'), 400);
-        }
+        // Tenant identity is server-side configuration. Never trust company_id from the browser.
+        $company_id = (int) get_option('bitey_company_id', 1);
+        $channel = 'website';
 
         if ($company_id < 1) {
             $company_id = 1;
+        }
+
+        if ($message === '') {
+            wp_send_json_error(array('reply' => 'Escribe un mensaje para Bitey.'), 400);
         }
 
         if ($phone === '') {
@@ -43,7 +62,7 @@ class Bitey_API {
             'phone' => $phone,
             'company_id' => $company_id,
             'customer_name' => $name !== '' ? $name : 'Visitor',
-            'channel' => $channel !== '' ? $channel : 'website',
+            'channel' => $channel,
         );
 
         $response = wp_remote_post(
@@ -95,7 +114,9 @@ class Bitey_API {
             'intent' => isset($json['intent']) ? sanitize_key($json['intent']) : null,
             'ticket_id' => isset($json['ticket_id']) ? absint($json['ticket_id']) : null,
             'conversation_id' => isset($json['conversation_id']) ? absint($json['conversation_id']) : null,
+            'customer_id' => isset($json['customer_id']) ? absint($json['customer_id']) : null,
             'language' => isset($json['language']) ? sanitize_key($json['language']) : null,
+            'confidence' => isset($json['confidence']) ? (int) $json['confidence'] : null,
         ));
     }
 }
