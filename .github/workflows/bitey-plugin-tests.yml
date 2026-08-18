@@ -1,0 +1,55 @@
+name: Bitey Plugin Tests
+
+on:
+  push:
+    branches:
+      - bitey-2.0-rebuild
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: PHP syntax check
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in $(find . -type f -name '*.php'); do
+            php -l "$file"
+          done
+
+      - name: JavaScript syntax check
+        run: node --check assets/js/bitey.js
+
+      - name: Verify consolidated plugin structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f bitey-ai.php
+          test -f includes/class-bitey-api.php
+          test -f includes/class-bitey-assets.php
+          test -f includes/class-bitey-widget.php
+          test -f includes/class-bitey-settings.php
+          test -f includes/class-bitey-rest.php
+          test -f assets/js/bitey.js
+          test -f assets/css/bitey-style.css
+          test ! -f assets/js/bitey-script.js
+          test ! -f assets/css/bitey.css
+          test ! -f includes/class-bitey-chat.php
+          test ! -f templates/chat-window.php
+          test ! -f templates/widget.php
+
+      - name: Verify required PHP includes
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q "includes/class-bitey-api.php" bitey-ai.php
+          grep -q "includes/class-bitey-assets.php" bitey-ai.php
+          grep -q "includes/class-bitey-widget.php" bitey-ai.php
+          grep -q "includes/class-bitey-settings.php" bitey-ai.php
+          grep -q "includes/class-bitey-rest.php" bitey-ai.php
