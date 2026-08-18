@@ -4,218 +4,47 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| Bitey Widget
-|--------------------------------------------------------------------------
-|
-| Frontend Chat Interface
-|
-*/
-
-
 class Bitey_Widget {
 
-
-
-    public function __construct(){
-
-
-        add_action(
-            'wp_footer',
-            array(
-                $this,
-                'render'
-            )
-        );
-
-
+    public function __construct() {
+        add_action('wp_footer', array($this, 'render'));
     }
 
-
-
-
-
-    public function render(){
-
-
+    public function render() {
         ?>
-
-
-        <div id="bitey-container">
-
-
-
-            <!-- Floating Button -->
-
-            <button 
-                id="bitey-button"
-                class="bitey-button"
-                type="button">
-
+        <div id="bitey-container" class="bitey-container">
+            <button id="bitey-button" class="bitey-button" type="button" aria-controls="bitey-window" aria-expanded="false" aria-label="Abrir Bitey AI">
                 🤖
-
             </button>
 
-
-
-
-
-
-
-            <!-- Chat Window -->
-
-
-            <div 
-                id="bitey-window"
-                class="bitey-window"
-                style="display:none;">
-
-
-
-
-
-                <div class="bitey-header">
-
-
-                    <span>
-                        Bitey AI
-                    </span>
-
-
-                    <button
-                        id="bitey-close"
-                        type="button">
-
-                        ×
-
-                    </button>
-
-
+            <section id="bitey-window" class="bitey-window" aria-label="Bitey AI Assistant" hidden>
+                <div id="bitey-header" class="bitey-header">
+                    <span>Bitey AI</span>
+                    <button id="bitey-close" type="button" aria-label="Cerrar Bitey">×</button>
                 </div>
 
-
-
-
-
-
-
-
-                <div 
-                    id="bitey-messages"
-                    class="bitey-messages">
-
-
-                    <div class="bitey-message bot">
-
-                        Hola 👋 soy Bitey.
+                <div id="bitey-messages" class="bitey-messages" aria-live="polite">
+                    <div class="bitey-ai">
+                        Hola 👋 soy Bitey.<br>
                         ¿Cómo puedo ayudarte?
-
                     </div>
-
-
                 </div>
-
-
-
-
-
-
-
-
 
                 <div class="bitey-user-data">
+                    <label class="screen-reader-text" for="bitey-name">Tu nombre</label>
+                    <input id="bitey-name" type="text" autocomplete="name" placeholder="Tu nombre">
 
-
-
-                    <input
-
-                        id="bitey-name"
-
-                        type="text"
-
-                        placeholder="Tu nombre"
-
-                    />
-
-
-
-
-                    <input
-
-                        id="bitey-phone"
-
-                        type="text"
-
-                        placeholder="WhatsApp"
-
-                    />
-
-
-
+                    <label class="screen-reader-text" for="bitey-phone">WhatsApp</label>
+                    <input id="bitey-phone" type="tel" autocomplete="tel" placeholder="WhatsApp (opcional)">
                 </div>
-
-
-
-
-
-
-
-
 
                 <div class="bitey-input-area">
-
-
-                    <input
-
-                        id="bitey-input"
-
-                        type="text"
-
-                        placeholder="Escribe tu mensaje..."
-
-                    />
-
-
-
-
-                    <button
-
-                        id="bitey-send"
-
-                        type="button">
-
-
-                        Enviar
-
-
-                    </button>
-
-
-
+                    <label class="screen-reader-text" for="bitey-input">Mensaje</label>
+                    <input id="bitey-input" type="text" autocomplete="off" maxlength="2000" placeholder="Describe tu problema...">
+                    <button id="bitey-send" type="button">Enviar</button>
                 </div>
-
-
-
-
-
-
-
-            </div>
-
-
-
+            </section>
         </div>
-
-
-
-
         <?php
-
-
     }
-
-
-
 }
