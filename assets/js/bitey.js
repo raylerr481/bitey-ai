@@ -99,8 +99,6 @@ document.addEventListener("DOMContentLoaded", function () {
         form.append("message", message);
         form.append("name", nameInput ? nameInput.value.trim() : "Visitor");
         form.append("phone", phoneInput && phoneInput.value.trim() ? phoneInput.value.trim() : visitorId());
-        form.append("company_id", bitey_ajax.company_id || "1");
-        form.append("channel", bitey_ajax.channel || "website");
 
         fetch(bitey_ajax.ajax_url, {
             method: "POST",
