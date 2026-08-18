@@ -14,22 +14,13 @@ class Bitey_API {
 
     private function normalize_language($value) {
         $value = strtolower(trim((string) $value));
-        $map = array(
-            'auto' => 'auto',
-            'pt' => 'pt-BR',
-            'pt-br' => 'pt-BR',
-            'es' => 'es',
-            'en' => 'en',
-        );
+        $map = array('auto' => 'auto', 'pt' => 'pt-BR', 'pt-br' => 'pt-BR', 'es' => 'es', 'en' => 'en');
         return isset($map[$value]) ? $map[$value] : 'auto';
     }
 
     private function diagnostic_reply($code, $fallback, $status = 502, $extra = array()) {
         error_log('[Bitey] ' . $code . ' ' . wp_json_encode($extra));
-        wp_send_json_error(array_merge(array(
-            'code' => $code,
-            'reply' => $fallback,
-        ), $extra), $status);
+        wp_send_json_error(array_merge(array('code' => $code, 'reply' => $fallback), $extra), $status);
     }
 
     public function send_message() {
@@ -38,7 +29,7 @@ class Bitey_API {
         }
 
         $message = isset($_POST['message']) ? sanitize_textarea_field(wp_unslash($_POST['message'])) : '';
-        $name = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : 'Customer';
+        $name = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
         $phone = isset($_POST['phone']) ? sanitize_text_field(wp_unslash($_POST['phone'])) : '';
         $company_id = isset($_POST['company_id']) ? absint($_POST['company_id']) : 1;
         $channel = isset($_POST['channel']) ? sanitize_key(wp_unslash($_POST['channel'])) : 'website';
@@ -51,7 +42,6 @@ class Bitey_API {
 
         $backend_url = untrailingslashit((string) get_option('bitey_backend_url', BITEY_DEFAULT_BACKEND));
         $endpoint = $backend_url . '/chat';
-
         $payload = array(
             'message' => $message,
             'phone' => $phone,
@@ -64,18 +54,12 @@ class Bitey_API {
 
         $response = wp_remote_post($endpoint, array(
             'timeout' => 30,
-            'headers' => array(
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json',
-            ),
+            'headers' => array('Accept' => 'application/json', 'Content-Type' => 'application/json'),
             'body' => wp_json_encode($payload),
         ));
 
         if (is_wp_error($response)) {
-            $this->diagnostic_reply('backend_unreachable', 'No se pudo conectar con Bitey Backend.', 502, array(
-                'transport_error' => $response->get_error_message(),
-                'endpoint' => $endpoint,
-            ));
+            $this->diagnostic_reply('backend_unreachable', 'No se pudo conectar con Bitey Backend.', 502, array('transport_error' => $response->get_error_message(), 'endpoint' => $endpoint));
         }
 
         $status = wp_remote_retrieve_response_code($response);
@@ -83,11 +67,8 @@ class Bitey_API {
         $body = json_decode($raw_body, true);
 
         if ($status < 200 || $status >= 300) {
-            $this->diagnostic_reply('backend_http_error', 'Bitey Backend devolvió un error.', 502, array(
-                'backend_status' => $status,
-            ));
+            $this->diagnostic_reply('backend_http_error', 'Bitey Backend devolvió un error.', 502, array('backend_status' => $status));
         }
-
         if (!is_array($body)) {
             $this->diagnostic_reply('invalid_backend_json', 'Bitey Backend respondió con datos no válidos.', 502);
         }
@@ -96,7 +77,6 @@ class Bitey_API {
         if (is_array($reply)) {
             $reply = $reply['text'] ?? $reply['message'] ?? wp_json_encode($reply);
         }
-
         if ($reply === '') {
             $this->diagnostic_reply('empty_backend_response', 'Bitey recibió tu mensaje, pero no generó una respuesta.', 502);
         }
@@ -108,6 +88,8 @@ class Bitey_API {
             'language' => $body['language'] ?? null,
             'language_source' => $body['language_source'] ?? null,
             'conversation_id' => $body['conversation_id'] ?? $conversation_id,
+            'customer_id' => $body['customer_id'] ?? null,
+            'customer_name' => $body['customer_name'] ?? ($name ?: null),
         ));
     }
 }
