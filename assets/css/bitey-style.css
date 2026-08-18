@@ -1,502 +1,139 @@
 #bitey-container {
-
     position: fixed;
-
     right: 25px;
-
     bottom: 25px;
-
     z-index: 99999;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
+    font-family: Arial, Helvetica, sans-serif;
 }
-
-
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Floating Button
-|--------------------------------------------------------------------------
-*/
-
 
 .bitey-button {
-
-
     width: 60px;
-
     height: 60px;
-
-
     border-radius: 50%;
-
-
     border: none;
-
-
     cursor: pointer;
-
-
     font-size: 28px;
-
-
     display: flex;
-
-
     align-items: center;
-
-
     justify-content: center;
-
-
     background: #2563eb;
-
-
     color: white;
-
-
-    box-shadow:
-        0 5px 15px rgba(
-            0,
-            0,
-            0,
-            .25
-        );
-
-
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .25);
 }
-
-
-
-
 
 .bitey-button:hover {
-
-
     transform: scale(1.05);
-
-
 }
-
-
-
-
-
-
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Chat Window
-|--------------------------------------------------------------------------
-*/
-
 
 .bitey-window {
-
-
     width: 350px;
-
-
     height: 500px;
-
-
     background: white;
-
-
     border-radius: 15px;
-
-
     position: absolute;
-
-
     right: 0;
-
-
     bottom: 75px;
-
-
-    display: flex;
-
-
     flex-direction: column;
-
-
     overflow: hidden;
-
-
-    box-shadow:
-
-        0 10px 30px rgba(
-            0,
-            0,
-            0,
-            .25
-        );
-
-
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
 }
-
-
-
-
-
-
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Header
-|--------------------------------------------------------------------------
-*/
-
 
 .bitey-header {
-
-
     background: #2563eb;
-
-
-    color:white;
-
-
-    padding:15px;
-
-
-    display:flex;
-
-
-    justify-content:space-between;
-
-
-    align-items:center;
-
-
-    font-weight:bold;
-
-
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
 }
-
-
-
-
 
 .bitey-header button {
-
-
-    background:none;
-
-
-    border:none;
-
-
-    color:white;
-
-
-    font-size:22px;
-
-
-    cursor:pointer;
-
-
+    background: none;
+    border: none;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
 }
-
-
-
-
-
-
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Messages
-|--------------------------------------------------------------------------
-*/
-
 
 .bitey-messages {
-
-
-    flex:1;
-
-
-    padding:15px;
-
-
-    overflow-y:auto;
-
-
-    background:#f8fafc;
-
-
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: #f8fafc;
 }
-
-
-
-
-
-
 
 .bitey-message {
-
-
-    padding:10px;
-
-
-    margin-bottom:10px;
-
-
-    border-radius:10px;
-
-
-    max-width:80%;
-
-
-    line-height:1.4;
-
-
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    max-width: 80%;
+    line-height: 1.4;
+    word-break: break-word;
 }
 
-
-
-
-
-
-
-.bitey-message.user {
-
-
-    background:#2563eb;
-
-
-    color:white;
-
-
-    margin-left:auto;
-
-
+.bitey-message.bitey-user {
+    background: #2563eb;
+    color: white;
+    margin-left: auto;
 }
 
-
-
-
-
-
-
-.bitey-message.bot {
-
-
-    background:#e5e7eb;
-
-
-    color:#111827;
-
-
+.bitey-message.bitey-ai {
+    background: #e5e7eb;
+    color: #111827;
 }
-
-
-
-
-
-
-
-.bitey-message.loading {
-
-
-    opacity:.7;
-
-
-}
-
-
-
-
-
-
-
-
-
-/*
-|--------------------------------------------------------------------------
-| User data
-|--------------------------------------------------------------------------
-*/
-
 
 .bitey-user-data {
-
-
-    padding:10px;
-
-
-    display:flex;
-
-
-    gap:5px;
-
-
+    padding: 10px;
+    display: flex;
+    gap: 5px;
 }
-
-
-
-
 
 .bitey-user-data input {
-
-
-    width:50%;
-
-
-    padding:8px;
-
-
-    border:1px solid #ddd;
-
-
-    border-radius:8px;
-
-
+    width: 50%;
+    min-width: 0;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
 }
-
-
-
-
-
-
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Input Area
-|--------------------------------------------------------------------------
-*/
-
 
 .bitey-input-area {
-
-
-    display:flex;
-
-
-    padding:10px;
-
-
-    border-top:1px solid #ddd;
-
-
-    gap:5px;
-
-
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    gap: 5px;
 }
-
-
-
-
-
-
 
 .bitey-input-area input {
-
-
-    flex:1;
-
-
-    padding:10px;
-
-
-    border-radius:8px;
-
-
-    border:1px solid #ddd;
-
-
+    flex: 1;
+    min-width: 0;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
 }
-
-
-
-
-
-
 
 .bitey-input-area button {
-
-
-    background:#2563eb;
-
-
-    color:white;
-
-
-    border:none;
-
-
-    padding:10px 15px;
-
-
-    border-radius:8px;
-
-
-    cursor:pointer;
-
-
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
+.bitey-input-area button:disabled {
+    opacity: .6;
+    cursor: wait;
+}
 
-
-
-
-
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Mobile
-|--------------------------------------------------------------------------
-*/
-
-
-@media(max-width:600px){
-
-
-
+@media (max-width: 600px) {
     #bitey-container {
-
-
-        right:15px;
-
-
-        bottom:15px;
-
-
+        right: 15px;
+        bottom: 15px;
     }
-
-
-
-
 
     .bitey-window {
-
-
-        width:90vw;
-
-
-        height:70vh;
-
-
+        width: min(90vw, 350px);
+        height: min(70vh, 500px);
     }
-
-
-
 }
