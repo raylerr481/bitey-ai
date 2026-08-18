@@ -33,8 +33,6 @@ class Bitey_Assets {
         wp_localize_script('bitey-ai', 'bitey_ajax', array(
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('bitey_nonce'),
-            'company_id' => (int) get_option('bitey_company_id', 1),
-            'channel' => 'website',
         ));
     }
 }
