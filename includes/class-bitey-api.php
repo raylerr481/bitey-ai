@@ -12,6 +12,18 @@ class Bitey_API {
         add_action('wp_ajax_nopriv_bitey_chat', array($this, 'send_message'));
     }
 
+    private function normalize_language($value) {
+        $value = strtolower(trim((string) $value));
+        $map = array(
+            'auto' => 'auto',
+            'pt' => 'pt-BR',
+            'pt-br' => 'pt-BR',
+            'es' => 'es',
+            'en' => 'en',
+        );
+        return isset($map[$value]) ? $map[$value] : 'auto';
+    }
+
     public function send_message() {
         if (!check_ajax_referer('bitey_nonce', 'nonce', false)) {
             wp_send_json_error(array('code' => 'invalid_nonce', 'reply' => 'Solicitud no autorizada.'), 403);
@@ -23,12 +35,7 @@ class Bitey_API {
         $company_id = isset($_POST['company_id']) ? absint($_POST['company_id']) : 1;
         $channel = isset($_POST['channel']) ? sanitize_key(wp_unslash($_POST['channel'])) : 'website';
         $conversation_id = isset($_POST['conversation_id']) ? sanitize_key(wp_unslash($_POST['conversation_id'])) : '';
-        $language_preference = isset($_POST['language_preference']) ? sanitize_key(wp_unslash($_POST['language_preference'])) : 'auto';
-
-        $allowed_languages = array('auto', 'pt-BR', 'es', 'en');
-        if (!in_array($language_preference, $allowed_languages, true)) {
-            $language_preference = 'auto';
-        }
+        $language_preference = $this->normalize_language(isset($_POST['language_preference']) ? wp_unslash($_POST['language_preference']) : 'auto');
 
         if ($message === '') {
             wp_send_json_error(array('code' => 'empty_message', 'reply' => 'Escribe un mensaje para continuar.'), 400);
