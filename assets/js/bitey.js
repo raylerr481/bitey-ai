@@ -1,140 +1,101 @@
 document.addEventListener("DOMContentLoaded", function () {
-
     const button = document.getElementById("bitey-button");
     const windowChat = document.getElementById("bitey-window");
+    const closeButton = document.getElementById("bitey-close");
     const sendButton = document.getElementById("bitey-send");
     const input = document.getElementById("bitey-input");
+    const nameInput = document.getElementById("bitey-name");
+    const phoneInput = document.getElementById("bitey-phone");
     const messages = document.getElementById("bitey-messages");
 
-    if (!button || !windowChat) {
+    if (!button || !windowChat || !sendButton || !input || !messages || typeof bitey_ajax === "undefined") {
         return;
     }
 
-    // Mostrar / ocultar ventana
     button.addEventListener("click", function () {
-
-        if (windowChat.style.display === "flex") {
-            windowChat.style.display = "none";
-        } else {
-            windowChat.style.display = "flex";
+        const isOpen = windowChat.style.display === "flex";
+        windowChat.style.display = isOpen ? "none" : "flex";
+        if (!isOpen) {
             input.focus();
         }
-
     });
 
-    // Enter para enviar
-    input.addEventListener("keypress", function (e) {
+    if (closeButton) {
+        closeButton.addEventListener("click", function () {
+            windowChat.style.display = "none";
+        });
+    }
 
-        if (e.key === "Enter") {
+    input.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
             sendMessage();
         }
-
     });
 
     sendButton.addEventListener("click", sendMessage);
 
     function addMessage(text, sender) {
-
         const div = document.createElement("div");
-
-        div.className = sender;
-
-        div.innerHTML = text;
-
+        div.className = "bitey-message " + sender;
+        div.textContent = String(text || "");
         messages.appendChild(div);
-
         messages.scrollTop = messages.scrollHeight;
-
+        return div;
     }
 
     function showTyping() {
-
-        const div = document.createElement("div");
-
-        div.id = "bitey-typing";
-
-        div.className = "bitey-ai";
-
-        div.innerHTML = "Bitey está escribiendo...";
-
-        messages.appendChild(div);
-
-        messages.scrollTop = messages.scrollHeight;
-
-    }
-
-    function hideTyping() {
-
-        const typing = document.getElementById("bitey-typing");
-
-        if (typing) {
-            typing.remove();
-        }
-
+        return addMessage("Bitey está escribiendo...", "bitey-ai");
     }
 
     function sendMessage() {
-
         const message = input.value.trim();
-
-        if (message === "") {
+        if (!message || sendButton.disabled) {
             return;
         }
 
         addMessage(message, "bitey-user");
-
         input.value = "";
-
-        showTyping();
+        sendButton.disabled = true;
+        const typing = showTyping();
 
         const form = new FormData();
-
-        form.append("action", "bitey_chat");
+        form.append("action", "bitey_send_message");
         form.append("message", message);
         form.append("nonce", bitey_ajax.nonce);
+        form.append("name", nameInput ? nameInput.value.trim() : "Customer");
+        form.append("phone", phoneInput ? phoneInput.value.trim() : "");
+        form.append("company_id", bitey_ajax.company_id || 1);
+        form.append("channel", bitey_ajax.channel || "website");
 
-        fetch(bitey_ajax.ajax_url, {
+        fetch(bitey_ajax.ajax_url, { method: "POST", body: form })
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error("HTTP " + response.status);
+                }
+                return response.json();
+            })
+            .then(function (data) {
+                if (typing) {
+                    typing.remove();
+                }
 
-            method: "POST",
-
-            body: form
-
-        })
-
-        .then(response => response.json())
-
-        .then(data => {
-
-            hideTyping();
-
-            if (data.success) {
-
-                addMessage(data.reply, "bitey-ai");
-
-            } else {
-
-                addMessage(
-                    "Error: " + data.reply,
-                    "bitey-ai"
-                );
-
-            }
-
-        })
-
-        .catch(error => {
-
-            hideTyping();
-
-            addMessage(
-                "No se pudo conectar con Bitey.",
-                "bitey-ai"
-            );
-
-            console.error(error);
-
-        });
-
+                if (data.success) {
+                    addMessage(data.data && data.data.reply ? data.data.reply : "Bitey no devolvió una respuesta.", "bitey-ai");
+                } else {
+                    addMessage(data.data && data.data.reply ? data.data.reply : "Bitey no pudo procesar la solicitud.", "bitey-ai");
+                }
+            })
+            .catch(function (error) {
+                if (typing) {
+                    typing.remove();
+                }
+                console.error("[Bitey]", error);
+                addMessage("No se pudo conectar con Bitey Backend.", "bitey-ai");
+            })
+            .finally(function () {
+                sendButton.disabled = false;
+                input.focus();
+            });
     }
-
 });
