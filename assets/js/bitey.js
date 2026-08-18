@@ -2,9 +2,7 @@
     "use strict";
 
     function initBitey() {
-        if (window.__biteyInitialized) {
-            return;
-        }
+        if (window.__biteyInitialized) return;
 
         const button = document.getElementById("bitey-button");
         const windowChat = document.getElementById("bitey-window");
@@ -20,7 +18,7 @@
             return;
         }
 
-        if (typeof window.bitey_ajax === "undefined" || !window.bitey_ajax.ajax_url || !window.bitey_ajax.nonce) {
+        if (!window.bitey_ajax || !window.bitey_ajax.ajax_url || !window.bitey_ajax.nonce) {
             console.error("[Bitey] AJAX configuration is missing.");
             return;
         }
@@ -30,12 +28,15 @@
         button.addEventListener("click", function () {
             const isOpen = windowChat.style.display === "flex";
             windowChat.style.display = isOpen ? "none" : "flex";
+            button.setAttribute("aria-expanded", String(!isOpen));
             if (!isOpen) input.focus();
         });
 
         if (closeButton) {
             closeButton.addEventListener("click", function () {
                 windowChat.style.display = "none";
+                button.setAttribute("aria-expanded", "false");
+                button.focus();
             });
         }
 
