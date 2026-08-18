@@ -4,218 +4,42 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * Enqueues the Bitey frontend assets and exposes the WordPress AJAX endpoint.
+ */
+class Bitey_Assets
+{
+    public function __construct()
+    {
+        add_action('wp_enqueue_scripts', array($this, 'load_assets'));
+    }
 
-/*
-|--------------------------------------------------------------------------
-| Bitey Widget
-|--------------------------------------------------------------------------
-|
-| Frontend Chat Interface
-|
-*/
-
-
-class Bitey_Widget {
-
-
-
-    public function __construct(){
-
-
-        add_action(
-            'wp_footer',
-            array(
-                $this,
-                'render'
-            )
+    public function load_assets()
+    {
+        wp_enqueue_style(
+            'bitey-style',
+            BITEY_URL . 'assets/css/bitey-style.css',
+            array(),
+            BITEY_VERSION
         );
 
+        wp_enqueue_script(
+            'bitey-script',
+            BITEY_URL . 'assets/js/bitey.js',
+            array(),
+            BITEY_VERSION,
+            true
+        );
 
+        wp_localize_script(
+            'bitey-script',
+            'bitey_ajax',
+            array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('bitey_nonce'),
+                'company_id' => absint(get_option('bitey_company_id', 1)) ?: 1,
+                'channel' => 'website',
+            )
+        );
     }
-
-
-
-
-
-    public function render(){
-
-
-        ?>
-
-
-        <div id="bitey-container">
-
-
-
-            <!-- Floating Button -->
-
-            <button 
-                id="bitey-button"
-                class="bitey-button"
-                type="button">
-
-                🤖
-
-            </button>
-
-
-
-
-
-
-
-            <!-- Chat Window -->
-
-
-            <div 
-                id="bitey-window"
-                class="bitey-window"
-                style="display:none;">
-
-
-
-
-
-                <div class="bitey-header">
-
-
-                    <span>
-                        Bitey AI
-                    </span>
-
-
-                    <button
-                        id="bitey-close"
-                        type="button">
-
-                        ×
-
-                    </button>
-
-
-                </div>
-
-
-
-
-
-
-
-
-                <div 
-                    id="bitey-messages"
-                    class="bitey-messages">
-
-
-                    <div class="bitey-message bot">
-
-                        Hola 👋 soy Bitey.
-                        ¿Cómo puedo ayudarte?
-
-                    </div>
-
-
-                </div>
-
-
-
-
-
-
-
-
-
-                <div class="bitey-user-data">
-
-
-
-                    <input
-
-                        id="bitey-name"
-
-                        type="text"
-
-                        placeholder="Tu nombre"
-
-                    />
-
-
-
-
-                    <input
-
-                        id="bitey-phone"
-
-                        type="text"
-
-                        placeholder="WhatsApp"
-
-                    />
-
-
-
-                </div>
-
-
-
-
-
-
-
-
-
-                <div class="bitey-input-area">
-
-
-                    <input
-
-                        id="bitey-input"
-
-                        type="text"
-
-                        placeholder="Escribe tu mensaje..."
-
-                    />
-
-
-
-
-                    <button
-
-                        id="bitey-send"
-
-                        type="button">
-
-
-                        Enviar
-
-
-                    </button>
-
-
-
-                </div>
-
-
-
-
-
-
-
-            </div>
-
-
-
-        </div>
-
-
-
-
-        <?php
-
-
-    }
-
-
-
 }
