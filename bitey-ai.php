@@ -2,8 +2,8 @@
 /*
 Plugin Name: Bitey AI Assistant
 Plugin URI: https://bitefixes.com
-Description: Asistente IA conectado con Bitey Core FastAPI.
-Version: 1.3.0
+Description: Bitey AI empresarial conectado con Bitey Core FastAPI.
+Version: 2.0.1
 Author: BiteFixes
 Author URI: https://bitefixes.com
 License: GPL2
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BITEY_VERSION', '1.3.0');
+define('BITEY_VERSION', '2.0.1');
 define('BITEY_PATH', plugin_dir_path(__FILE__));
 define('BITEY_URL', plugin_dir_url(__FILE__));
 
@@ -22,8 +22,7 @@ require_once BITEY_PATH . 'includes/class-bitey-assets.php';
 require_once BITEY_PATH . 'includes/class-bitey-widget.php';
 require_once BITEY_PATH . 'includes/class-bitey-settings.php';
 
-function bitey_initialize()
-{
+function bitey_initialize() {
     new Bitey_API();
     new Bitey_Assets();
     new Bitey_Widget();
