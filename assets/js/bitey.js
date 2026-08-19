@@ -8,7 +8,7 @@
         const work=$('bitey-work'), workLabel=$('bitey-work-label'), memoryBadge=$('bitey-memory');
         if (!button||!win||!send||!input||!messages||!window.bitey_ajax?.ajax_url||!window.bitey_ajax?.nonce) return;
         window.__biteyInitialized=true;
-        const KEY='bitey_session_v6';
+        const KEY='bitey_session_v7';
         let state={name:'',phone:'',language:'auto',detected_language:'',conversation_id:'',customer_id:'',memory_messages:0};
         try { state=Object.assign(state,JSON.parse(localStorage.getItem(KEY)||'{}')); } catch(e) {}
         const ui={
@@ -45,9 +45,14 @@
             if(!state.name||!state.phone){addMessage(currentLanguage()==='pt-BR'?'Informe seu nome e telefone para continuar.':currentLanguage()==='en'?'Please enter your name and phone to continue.':'Indica tu nombre y teléfono para continuar.','bitey-ai');refresh();return;}
             addMessage(message,'bitey-user');input.value='';send.disabled=true;startWork();
             const form=new FormData();form.append('action','bitey_send_message');form.append('message',message);form.append('nonce',window.bitey_ajax.nonce);form.append('name',state.name);form.append('phone',state.phone);form.append('company_id',window.bitey_ajax.company_id||1);form.append('channel',window.bitey_ajax.channel||'website');form.append('conversation_id',state.conversation_id||'');form.append('language_preference',state.language||'auto');
-            fetch(window.bitey_ajax.ajax_url,{method:'POST',body:form,credentials:'same-origin'}).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json();}).then(d=>{
-                const x=d&&d.data?d.data:{};if(x.conversation_id)state.conversation_id=x.conversation_id;if(x.customer_id)state.customer_id=x.customer_id;if(x.customer_name)state.name=x.customer_name;if(x.phone)state.phone=x.phone;if(x.language)state.detected_language=x.language;if(x.memory)state.memory_messages=Number(x.memory.messages||0);save();refresh();addMessage(x.reply||x.response||ui[currentLanguage()].error,'bitey-ai');
-            }).catch(()=>addMessage(ui[currentLanguage()].error,'bitey-ai')).finally(()=>{stopWork();send.disabled=false;input.focus();});
+            fetch(window.bitey_ajax.ajax_url,{method:'POST',body:form,credentials:'same-origin'})
+                .then(async r=>{const text=await r.text();let d=null;try{d=JSON.parse(text);}catch(e){throw Error('WordPress AJAX devolvió una respuesta no JSON (HTTP '+r.status+').');}if(!r.ok)throw Error(d?.data?.reply||d?.data?.message||('WordPress AJAX HTTP '+r.status));if(!d?.success)throw Error(d?.data?.reply||d?.data?.message||d?.data?.code||'WordPress rechazó la solicitud.');return d;})
+                .then(d=>{
+                    const x=d.data||{};
+                    if(x.conversation_id)state.conversation_id=x.conversation_id;if(x.customer_id)state.customer_id=x.customer_id;if(x.customer_name)state.name=x.customer_name;if(x.phone)state.phone=x.phone;if(x.language)state.detected_language=x.language;if(x.memory)state.memory_messages=Number(x.memory.messages||0);save();refresh();addMessage(x.reply||x.response||ui[currentLanguage()].error,'bitey-ai');
+                })
+                .catch(err=>addMessage(err?.message||ui[currentLanguage()].error,'bitey-ai'))
+                .finally(()=>{stopWork();send.disabled=false;input.focus();});
         }
         refresh();
     }
