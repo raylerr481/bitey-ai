@@ -1,0 +1,31 @@
+name: Build Bitey AI WordPress ZIP
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare plugin directory
+        run: |
+          mkdir -p dist/bitey-ai
+          rsync -a --exclude='.git' --exclude='.github' --exclude='dist' --exclude='README.md' --exclude='README.txt' --exclude='BUILD-AND-ZIP.md' ./ dist/bitey-ai/
+
+      - name: Build ZIP
+        run: |
+          cd dist
+          zip -r ../bitey-ai.zip bitey-ai
+
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bitey-ai-wordpress
+          path: bitey-ai.zip
+          if-no-files-found: error
