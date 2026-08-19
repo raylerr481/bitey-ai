@@ -2,14 +2,14 @@
 /*
 Plugin Name: Bitey AI Assistant
 Plugin URI: https://bitefixes.com
-Description: Bitey AI empresarial conectado con Bitey Backend. Interfaz conversacional mínima, identificación y diagnóstico de comunicación.
-Version: 2.3.2
+Description: Bitey AI empresarial conectado con Bitey Backend. Interfaz conversacional mínima, identidad progresiva y transporte REST/AJAX gobernado.
+Version: 2.3.3
 Author: BiteFixes
 Author URI: https://bitefixes.com
 License: GPL2
 */
 if (!defined('ABSPATH')) exit;
-define('BITEY_VERSION','2.3.2');
+define('BITEY_VERSION','2.3.3');
 define('BITEY_PATH',plugin_dir_path(__FILE__));
 define('BITEY_URL',plugin_dir_url(__FILE__));
 require_once BITEY_PATH.'includes/class-bitey-api.php';
