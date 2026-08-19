@@ -29,6 +29,7 @@ jobs:
         run: |
           test -f dist/bitey-ai/bitey-ai.php
           grep -q '^Plugin Name:' dist/bitey-ai/bitey-ai.php
+          grep -q '^Version: 2.3.5' dist/bitey-ai/bitey-ai.php
           test -f dist/bitey-ai/includes/class-bitey-api.php
           test -f dist/bitey-ai/includes/class-bitey-assets.php
           test -f dist/bitey-ai/includes/class-bitey-settings.php
@@ -38,22 +39,16 @@ jobs:
           count=$(find dist/bitey-ai -type f | wc -l)
           test "$count" -eq 7
 
-      - name: Build direct WordPress ZIP
+      - name: Build directly installable ZIP
         run: |
           cd dist
-          zip -r ../bitey-ai-wordpress.zip bitey-ai
-          unzip -l ../bitey-ai-wordpress.zip
+          zip -r ../bitey-ai-2.3.5-installable.zip bitey-ai
+          unzip -t ../bitey-ai-2.3.5-installable.zip
+          unzip -l ../bitey-ai-2.3.5-installable.zip
 
-      - name: Upload direct WordPress ZIP
+      - name: Upload ONLY installable WordPress ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: bitey-ai-wordpress-zip
-          path: bitey-ai-wordpress.zip
-          if-no-files-found: error
-
-      - name: Upload plugin folder artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: bitey-ai-wordpress-plugin
-          path: dist/bitey-ai
+          name: bitey-ai-2.3.5-installable
+          path: bitey-ai-2.3.5-installable.zip
           if-no-files-found: error
