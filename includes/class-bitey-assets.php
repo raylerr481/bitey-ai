@@ -8,7 +8,7 @@ class Bitey_Assets
 
     public function load_assets()
     {
-        $version = defined('BITEY_VERSION') ? BITEY_VERSION : '2.3.3';
+        $version = defined('BITEY_VERSION') ? BITEY_VERSION : '2.3.4';
         $style = BITEY_URL . 'assets/css/bitey-style.css';
         $script = BITEY_URL . 'assets/js/bitey.js';
         $style_file = defined('BITEY_PATH') ? BITEY_PATH . 'assets/css/bitey-style.css' : '';
