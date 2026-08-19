@@ -39,16 +39,19 @@ jobs:
           count=$(find dist/bitey-ai -type f | wc -l)
           test "$count" -eq 7
 
-      - name: Build directly installable ZIP
+      - name: Verify production layout
         run: |
-          cd dist
-          zip -r ../bitey-ai-2.3.5-installable.zip bitey-ai
-          unzip -t ../bitey-ai-2.3.5-installable.zip
-          unzip -l ../bitey-ai-2.3.5-installable.zip
+          test "$(find dist/bitey-ai -type f | wc -l)" -eq 7
+          test "$(find dist/bitey-ai -mindepth 1 -maxdepth 1 -type d | sort | tr '\n' ' ')" = "dist/bitey-ai/assets dist/bitey-ai/includes "
 
-      - name: Upload ONLY installable WordPress ZIP
+      # Important: upload the PLUGIN FOLDER, not a ZIP file.
+      # GitHub wraps the artifact in its own ZIP when downloaded.
+      # Therefore the downloaded artifact will already be a valid
+      # WordPress plugin ZIP containing bitey-ai/bitey-ai.php.
+      - name: Upload directly installable WordPress plugin
         uses: actions/upload-artifact@v4
         with:
-          name: bitey-ai-2.3.5-installable
-          path: bitey-ai-2.3.5-installable.zip
+          name: bitey-ai-2.3.5-wordpress-installable
+          path: dist/bitey-ai
           if-no-files-found: error
+          include-hidden-files: false
