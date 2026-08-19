@@ -6,7 +6,7 @@
         const button=$('bitey-button'),win=$('bitey-window'),close=$('bitey-close'),send=$('bitey-send'),input=$('bitey-input'),messages=$('bitey-messages'),welcome=$('bitey-welcome');
         const languageSelect=$('bitey-language'),work=$('bitey-work'),workLabel=$('bitey-work-label'),memoryBadge=$('bitey-memory');
         if(!button||!win||!send||!input||!messages)return; window.__biteyInitialized=true;
-        const cfg=window.bitey_ajax||{},KEY='bitey_session_v10';
+        const cfg=window.bitey_ajax||{},KEY='bitey_session_v11';
         let state={name:'',last_name:'',phone:'',email:'',language:'auto',detected_language:'',conversation_id:'',customer_id:'',preferred_contact_channel:'web',memory_messages:0};
         try{state=Object.assign(state,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
         const ui={es:{welcome:'Hola 👋 soy Bitey. ¿Cómo puedo ayudarte?',input:'Escribe tu mensaje...',memory:'Memoria activa.'},'pt-BR':{welcome:'Olá 👋 sou o Bitey. Como posso ajudar?',input:'Digite sua mensagem...',memory:'Memória ativa.'},en:{welcome:"Hello 👋 I'm Bitey. How can I help?",input:'Type your message...',memory:'Memory active.'}};
