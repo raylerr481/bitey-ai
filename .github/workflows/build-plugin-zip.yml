@@ -3,8 +3,8 @@ name: Build Bitey AI WordPress ZIP
 on:
   workflow_dispatch:
   push:
-    tags:
-      - 'v*'
+    branches: [main]
+    tags: ['v*']
 
 jobs:
   build:
@@ -13,10 +13,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Prepare plugin directory
+      - name: Prepare production plugin
         run: |
-          mkdir -p dist/bitey-ai
-          rsync -a --exclude='.git' --exclude='.github' --exclude='dist' --exclude='README.md' --exclude='README.txt' --exclude='BUILD-AND-ZIP.md' ./ dist/bitey-ai/
+          rm -rf dist
+          mkdir -p dist/bitey-ai/includes dist/bitey-ai/assets/css dist/bitey-ai/assets/js
+          cp bitey-ai.php dist/bitey-ai/
+          cp includes/class-bitey-api.php dist/bitey-ai/includes/
+          cp includes/class-bitey-assets.php dist/bitey-ai/includes/
+          cp includes/class-bitey-settings.php dist/bitey-ai/includes/
+          cp includes/class-bitey-widget.php dist/bitey-ai/includes/
+          cp assets/css/bitey-style.css dist/bitey-ai/assets/css/
+          cp assets/js/bitey.js dist/bitey-ai/assets/js/
+
+      - name: Validate production contents
+        run: |
+          test -f dist/bitey-ai/bitey-ai.php
+          test -f dist/bitey-ai/includes/class-bitey-api.php
+          test -f dist/bitey-ai/includes/class-bitey-assets.php
+          test -f dist/bitey-ai/includes/class-bitey-settings.php
+          test -f dist/bitey-ai/includes/class-bitey-widget.php
+          test -f dist/bitey-ai/assets/css/bitey-style.css
+          test -f dist/bitey-ai/assets/js/bitey.js
+          if find dist/bitey-ai -type f | grep -Ev '\.(php|css|js)$'; then exit 1; fi
 
       - name: Build ZIP
         run: |
@@ -26,6 +44,6 @@ jobs:
       - name: Upload ZIP artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bitey-ai-wordpress
+          name: bitey-ai-wordpress-production
           path: bitey-ai.zip
           if-no-files-found: error
