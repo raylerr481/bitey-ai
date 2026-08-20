@@ -29,8 +29,10 @@ jobs:
         run: |
           test -f dist/bitey-ai/bitey-ai.php
           grep -q '^Plugin Name:' dist/bitey-ai/bitey-ai.php
-          grep -q '^Version: 2.4.1' dist/bitey-ai/bitey-ai.php
-          grep -q "define('BITEY_VERSION','2.4.1')" dist/bitey-ai/bitey-ai.php
+          grep -q '^Version: 2.4.2' dist/bitey-ai/bitey-ai.php
+          grep -q "define('BITEY_VERSION','2.4.2')" dist/bitey-ai/bitey-ai.php
+          grep -q "X-WP-Nonce" dist/bitey-ai/assets/js/bitey.js
+          grep -q "wp_verify_nonce" dist/bitey-ai/includes/class-bitey-api.php
           test -f dist/bitey-ai/includes/class-bitey-api.php
           test -f dist/bitey-ai/includes/class-bitey-assets.php
           test -f dist/bitey-ai/includes/class-bitey-settings.php
@@ -45,14 +47,10 @@ jobs:
           test "$(find dist/bitey-ai -type f | wc -l)" -eq 7
           test "$(find dist/bitey-ai -mindepth 1 -maxdepth 1 -type d | sort | tr '\n' ' ')" = "dist/bitey-ai/assets dist/bitey-ai/includes "
 
-      # Important: upload the PLUGIN FOLDER, not a ZIP file.
-      # GitHub wraps the artifact in its own ZIP when downloaded.
-      # Therefore the downloaded artifact will already be a valid
-      # WordPress plugin ZIP containing bitey-ai/bitey-ai.php.
       - name: Upload directly installable WordPress plugin
         uses: actions/upload-artifact@v4
         with:
-          name: bitey-ai-2.4.1-wordpress-installable
+          name: bitey-ai-2.4.2-wordpress-installable
           path: dist/bitey-ai
           if-no-files-found: error
           include-hidden-files: false
