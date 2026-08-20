@@ -29,7 +29,8 @@ jobs:
         run: |
           test -f dist/bitey-ai/bitey-ai.php
           grep -q '^Plugin Name:' dist/bitey-ai/bitey-ai.php
-          grep -q '^Version: 2.3.5' dist/bitey-ai/bitey-ai.php
+          grep -q '^Version: 2.4.1' dist/bitey-ai/bitey-ai.php
+          grep -q "define('BITEY_VERSION','2.4.1')" dist/bitey-ai/bitey-ai.php
           test -f dist/bitey-ai/includes/class-bitey-api.php
           test -f dist/bitey-ai/includes/class-bitey-assets.php
           test -f dist/bitey-ai/includes/class-bitey-settings.php
@@ -51,7 +52,7 @@ jobs:
       - name: Upload directly installable WordPress plugin
         uses: actions/upload-artifact@v4
         with:
-          name: bitey-ai-2.3.5-wordpress-installable
+          name: bitey-ai-2.4.1-wordpress-installable
           path: dist/bitey-ai
           if-no-files-found: error
           include-hidden-files: false
