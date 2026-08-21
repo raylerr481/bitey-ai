@@ -1,0 +1,36 @@
+name: Validate Bitey WordPress Plugin
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate plugin root
+        shell: bash
+        run: |
+          test -f bitey-ai.php
+          test -f readme.txt
+          test ! -e '*.zip'
+          if find . -type f -name '*.zip' | grep -q .; then echo 'ZIP files must not be committed inside the plugin repository'; exit 1; fi
+          php -l bitey-ai.php
+          for f in includes/*.php; do php -l "$f"; done
+      - name: Build installable plugin package
+        shell: bash
+        run: |
+          rm -rf package
+          mkdir -p package/bitey-ai
+          rsync -a --exclude='.git' --exclude='.github' --exclude='package' ./ package/bitey-ai/
+          test -f package/bitey-ai/bitey-ai.php
+          test "$(find package/bitey-ai -type f -name '*.zip' | wc -l)" -eq 0
+          (cd package && zip -qr ../bitey-ai-wordpress.zip bitey-ai)
+          unzip -l bitey-ai-wordpress.zip
+      - name: Upload installable ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: bitey-ai-wordpress
+          path: bitey-ai-wordpress.zip
+          if-no-files-found: error
