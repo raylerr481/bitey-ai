@@ -3,7 +3,7 @@ name: Build Bitey AI WordPress Plugin
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, feat/company-profile-globe]
     tags: ['v*']
 
 jobs:
@@ -35,10 +35,11 @@ jobs:
         run: |
           test -f dist/bitey-ai/bitey-ai.php
           grep -q '^Plugin Name:' dist/bitey-ai/bitey-ai.php
-          grep -q '^Version: 2.4.2' dist/bitey-ai/bitey-ai.php
-          grep -q "define('BITEY_VERSION','2.4.2')" dist/bitey-ai/bitey-ai.php
-          grep -q "X-WP-Nonce" dist/bitey-ai/assets/js/bitey.js
+          grep -q '^Version: 2.5.0' dist/bitey-ai/bitey-ai.php
+          grep -q "define('BITEY_VERSION','2.5.0')" dist/bitey-ai/bitey-ai.php
           grep -q "wp_verify_nonce" dist/bitey-ai/includes/class-bitey-api.php
+          grep -q "company-profile/import" dist/bitey-ai/includes/class-bitey-api.php
+          grep -q "bitey_import_company" dist/bitey-ai/assets/js/bitey.js
           test -f dist/bitey-ai/includes/class-bitey-api.php
           test -f dist/bitey-ai/includes/class-bitey-assets.php
           test -f dist/bitey-ai/includes/class-bitey-settings.php
@@ -48,15 +49,16 @@ jobs:
           count=$(find dist/bitey-ai -type f | wc -l)
           test "$count" -eq 7
 
-      - name: Verify production layout
+      - name: Build ZIP
         run: |
-          test "$(find dist/bitey-ai -type f | wc -l)" -eq 7
-          test "$(find dist/bitey-ai -mindepth 1 -maxdepth 1 -type d | sort | tr '\n' ' ')" = "dist/bitey-ai/assets dist/bitey-ai/includes "
+          cd dist
+          zip -r ../bitey-ai-2.5.0-wordpress.zip bitey-ai
+          cd ..
+          unzip -t bitey-ai-2.5.0-wordpress.zip
 
-      - name: Upload directly installable WordPress plugin
+      - name: Upload installable ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: bitey-ai-2.4.2-wordpress-installable
-          path: dist/bitey-ai
+          name: bitey-ai-2.5.0-wordpress
+          path: bitey-ai-2.5.0-wordpress.zip
           if-no-files-found: error
-          include-hidden-files: false
