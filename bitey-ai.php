@@ -2,8 +2,8 @@
 /**
  * Plugin Name: Bitey AI Assistant
  * Plugin URI: https://www.bitefixes.com
- * Description: Enterprise AI facade for WordPress. Bitey provides company context to external AI directors, accepts company documents and keeps the website interface isolated from business intelligence.
- * Version: 3.0.0
+ * Description: Enterprise AI facade for WordPress. Bitey supplies live company/page context to external AI directors and learns from evaluated interactions.
+ * Version: 3.1.0
  * Author: BiteFixes
  * Author URI: https://www.bitefixes.com
  * License: GPL-2.0-or-later
@@ -13,7 +13,7 @@
  */
 if (!defined('ABSPATH')) { exit; }
 
-define('BITEY_VERSION', '3.0.0');
+define('BITEY_VERSION', '3.1.0');
 define('BITEY_PATH', plugin_dir_path(__FILE__));
 define('BITEY_URL', plugin_dir_url(__FILE__));
 
@@ -33,10 +33,6 @@ function bitey_initialize() {
 add_action('plugins_loaded', 'bitey_initialize');
 
 register_activation_hook(__FILE__, function () {
-    if (get_option('bitey_company_id', null) === null) {
-        add_option('bitey_company_id', 1);
-    }
-    if (get_option('bitey_backend_url', null) === null) {
-        add_option('bitey_backend_url', 'https://bitefixes-backend.onrender.com');
-    }
+    if (get_option('bitey_company_id', null) === null) add_option('bitey_company_id', 1);
+    if (get_option('bitey_backend_url', null) === null) add_option('bitey_backend_url', 'https://bitefixes-backend.onrender.com');
 });
