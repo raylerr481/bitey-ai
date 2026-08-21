@@ -10,6 +10,7 @@ class Bitey_Widget {
         <div class="bitey-language-row"><label for="bitey-language">🌐</label><select id="bitey-language" aria-label="Idioma"><option value="auto">Automático</option><option value="es">Español</option><option value="pt-BR">Português</option><option value="en">English</option></select></div>
         <div id="bitey-work" class="bitey-work" hidden role="status" aria-live="polite"><span id="bitey-work-icon" class="bitey-work-icon" aria-hidden="true">🧠</span><span id="bitey-work-label">Entendiendo tu consulta…</span></div>
         <div id="bitey-messages" class="bitey-messages" aria-live="polite"><div id="bitey-welcome" class="bitey-message bitey-ai">Hola 👋 soy Bitey. ¿Cómo puedo ayudarte?</div></div>
+        <div class="bitey-attachment-row"><input id="bitey-company-document" type="file" accept=".pdf,.doc,.docx,.txt,.csv,.json,.md,application/pdf,text/plain,application/json,text/csv" hidden><button id="bitey-attach" type="button" aria-label="Adjuntar documento">📎</button><span id="bitey-file-name" aria-live="polite">Adjuntar documento de empresa</span></div>
         <div class="bitey-input-area"><input id="bitey-input" type="text" placeholder="Escribe tu mensaje..." autocomplete="off"><button id="bitey-send" type="button" aria-label="Enviar">➤</button></div>
     </div>
 </div>
