@@ -35,8 +35,8 @@ jobs:
         run: |
           test -f dist/bitey-ai/bitey-ai.php
           grep -q '^Plugin Name:' dist/bitey-ai/bitey-ai.php
-          grep -q '^Version: 2.5.0' dist/bitey-ai/bitey-ai.php
-          grep -q "define('BITEY_VERSION','2.5.0')" dist/bitey-ai/bitey-ai.php
+          grep -q '^Version: 2.5.2' dist/bitey-ai/bitey-ai.php
+          grep -q "define('BITEY_VERSION','2.5.2')" dist/bitey-ai/bitey-ai.php
           grep -q "wp_verify_nonce" dist/bitey-ai/includes/class-bitey-api.php
           grep -q "company-profile/import" dist/bitey-ai/includes/class-bitey-api.php
           grep -q "conversation_id" dist/bitey-ai/assets/js/bitey.js
@@ -57,13 +57,13 @@ jobs:
       - name: Build ZIP
         run: |
           cd dist
-          zip -r ../bitey-ai-2.5.0-wordpress.zip bitey-ai
+          zip -r ../bitey-ai-2.5.2-wordpress.zip bitey-ai
           cd ..
-          unzip -t bitey-ai-2.5.0-wordpress.zip
+          unzip -t bitey-ai-2.5.2-wordpress.zip
 
       - name: Upload installable ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: bitey-ai-2.5.0-wordpress
-          path: bitey-ai-2.5.0-wordpress.zip
+          name: bitey-ai-2.5.2-wordpress
+          path: bitey-ai-2.5.2-wordpress.zip
           if-no-files-found: error
