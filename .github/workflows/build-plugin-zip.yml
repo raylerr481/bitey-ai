@@ -3,7 +3,7 @@ name: Build Bitey AI WordPress Plugin
 on:
   workflow_dispatch:
   push:
-    branches: [main, feat/company-profile-globe]
+    branches: [main, feat/company-profile-globe, feat/business-context-onboarding]
     tags: ['v*']
 
 jobs:
@@ -40,6 +40,8 @@ jobs:
           grep -q "wp_verify_nonce" dist/bitey-ai/includes/class-bitey-api.php
           grep -q "company-profile/import" dist/bitey-ai/includes/class-bitey-api.php
           grep -q "bitey_import_company" dist/bitey-ai/assets/js/bitey.js
+          grep -q "IA externa" dist/bitey-ai/assets/js/bitey.js
+          grep -q "bitey-business-intro" dist/bitey-ai/includes/class-bitey-widget.php
           test -f dist/bitey-ai/includes/class-bitey-api.php
           test -f dist/bitey-ai/includes/class-bitey-assets.php
           test -f dist/bitey-ai/includes/class-bitey-settings.php
