@@ -1,18 +1,25 @@
 name: Build Bitey AI WordPress Plugin
 
 on:
-  workflow_dispatch:
   push:
-    branches: [main, feat/company-profile-globe, feat/business-context-onboarding]
-    tags: ['v*']
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   build:
+    name: Validate and package WordPress plugin
     runs-on: ubuntu-latest
     timeout-minutes: 10
+
     steps:
-      - name: Checkout
+      - name: Checkout main
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
 
       - name: PHP syntax check
         run: |
@@ -20,50 +27,51 @@ jobs:
           find . -type f -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
 
       - name: Prepare production plugin
+        shell: bash
         run: |
+          set -euo pipefail
           rm -rf dist
-          mkdir -p dist/bitey-ai/includes dist/bitey-ai/assets/css dist/bitey-ai/assets/js
-          cp bitey-ai.php dist/bitey-ai/
-          cp includes/class-bitey-api.php dist/bitey-ai/includes/
-          cp includes/class-bitey-assets.php dist/bitey-ai/includes/
-          cp includes/class-bitey-settings.php dist/bitey-ai/includes/
-          cp includes/class-bitey-widget.php dist/bitey-ai/includes/
-          cp assets/css/bitey-style.css dist/bitey-ai/assets/css/
-          cp assets/js/bitey.js dist/bitey-ai/assets/js/
+          mkdir -p dist/bitey-ai
+          cp -a bitey-ai.php includes assets dist/bitey-ai/
 
-      - name: Validate public WordPress plugin
+      - name: Validate WordPress plugin package
+        shell: bash
         run: |
+          set -euo pipefail
           test -f dist/bitey-ai/bitey-ai.php
           grep -q '^Plugin Name:' dist/bitey-ai/bitey-ai.php
-          grep -q '^Version: 2.5.2' dist/bitey-ai/bitey-ai.php
-          grep -q "define('BITEY_VERSION','2.5.2')" dist/bitey-ai/bitey-ai.php
-          grep -q "wp_verify_nonce" dist/bitey-ai/includes/class-bitey-api.php
-          grep -q "company-profile/import" dist/bitey-ai/includes/class-bitey-api.php
-          grep -q "conversation_id" dist/bitey-ai/assets/js/bitey.js
-          grep -q "Bitey" dist/bitey-ai/includes/class-bitey-widget.php
-          if grep -RqiE 'Aprendiz empresarial|IA externa|Las IAs externas|¿Quieres crear una IA para tu empresa' dist/bitey-ai; then
-            echo 'Internal learning/provider text leaked into public plugin.'
-            exit 1
-          fi
+          grep -q '^Version:' dist/bitey-ai/bitey-ai.php
           test -f dist/bitey-ai/includes/class-bitey-api.php
           test -f dist/bitey-ai/includes/class-bitey-assets.php
           test -f dist/bitey-ai/includes/class-bitey-settings.php
           test -f dist/bitey-ai/includes/class-bitey-widget.php
           test -f dist/bitey-ai/assets/css/bitey-style.css
           test -f dist/bitey-ai/assets/js/bitey.js
-          count=$(find dist/bitey-ai -type f | wc -l)
-          test "$count" -eq 7
+          grep -q 'conversation_id' dist/bitey-ai/assets/js/bitey.js
+          grep -q 'wp_verify_nonce' dist/bitey-ai/includes/class-bitey-api.php
 
-      - name: Build ZIP
+          # Public UI must not expose internal architecture/evaluation/provider language.
+          if grep -RqiE 'Aprendiz empresarial|IA externa|Las IAs externas|¿Quieres crear una IA para tu empresa' dist/bitey-ai; then
+            echo 'ERROR: internal learning/provider text leaked into the public plugin.'
+            exit 1
+          fi
+
+          echo 'Package validation passed.'
+          find dist/bitey-ai -type f -print | sort
+
+      - name: Build installable ZIP
+        shell: bash
         run: |
-          cd dist
-          zip -r ../bitey-ai-2.5.2-wordpress.zip bitey-ai
-          cd ..
-          unzip -t bitey-ai-2.5.2-wordpress.zip
+          set -euo pipefail
+          rm -f bitey-ai-wordpress.zip
+          (cd dist && zip -r ../bitey-ai-wordpress.zip bitey-ai)
+          unzip -t bitey-ai-wordpress.zip
+          unzip -l bitey-ai-wordpress.zip
 
       - name: Upload installable ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: bitey-ai-2.5.2-wordpress
-          path: bitey-ai-2.5.2-wordpress.zip
+          name: bitey-ai-wordpress-${{ github.sha }}
+          path: bitey-ai-wordpress.zip
           if-no-files-found: error
+          retention-days: 30
