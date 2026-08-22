@@ -31,7 +31,7 @@ jobs:
           cp assets/css/bitey-style.css dist/bitey-ai/assets/css/
           cp assets/js/bitey.js dist/bitey-ai/assets/js/
 
-      - name: Validate WordPress plugin
+      - name: Validate public WordPress plugin
         run: |
           test -f dist/bitey-ai/bitey-ai.php
           grep -q '^Plugin Name:' dist/bitey-ai/bitey-ai.php
@@ -39,9 +39,12 @@ jobs:
           grep -q "define('BITEY_VERSION','2.5.0')" dist/bitey-ai/bitey-ai.php
           grep -q "wp_verify_nonce" dist/bitey-ai/includes/class-bitey-api.php
           grep -q "company-profile/import" dist/bitey-ai/includes/class-bitey-api.php
-          grep -q "bitey_import_company" dist/bitey-ai/assets/js/bitey.js
-          grep -q "IA externa" dist/bitey-ai/assets/js/bitey.js
-          grep -q "bitey-business-intro" dist/bitey-ai/includes/class-bitey-widget.php
+          grep -q "conversation_id" dist/bitey-ai/assets/js/bitey.js
+          grep -q "Bitey" dist/bitey-ai/includes/class-bitey-widget.php
+          if grep -RqiE 'Aprendiz empresarial|IA externa|Las IAs externas|¿Quieres crear una IA para tu empresa' dist/bitey-ai; then
+            echo 'Internal learning/provider text leaked into public plugin.'
+            exit 1
+          fi
           test -f dist/bitey-ai/includes/class-bitey-api.php
           test -f dist/bitey-ai/includes/class-bitey-assets.php
           test -f dist/bitey-ai/includes/class-bitey-settings.php
