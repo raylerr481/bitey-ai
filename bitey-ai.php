@@ -2,7 +2,7 @@
 /*
 Plugin Name: Bitey AI Assistant
 Plugin URI: https://bitefixes.com
-Description: Bitey AI empresarial conectado al Bitey Cloud Gateway. Globo conversacional con memoria, idiomas, IA externa, contexto empresarial y carga segura de documentos para crear perfiles de empresa.
+Description: Bitey AI conversational assistant connected to the Bitey Cloud Gateway, with multilingual chat and secure business context handling.
 Version: 2.5.2
 Author: BiteFixes
 Author URI: https://bitefixes.com
