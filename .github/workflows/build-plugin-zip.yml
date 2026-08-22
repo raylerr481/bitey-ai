@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -23,6 +23,7 @@ jobs:
 
       - name: PHP syntax check
         run: |
+          set -euo pipefail
           php -v
           find . -type f -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
 
@@ -30,7 +31,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf dist
+          rm -rf dist bitey-ai-wordpress.zip
           mkdir -p dist/bitey-ai
           cp -a bitey-ai.php includes assets dist/bitey-ai/
 
@@ -50,7 +51,6 @@ jobs:
           grep -q 'conversation_id' dist/bitey-ai/assets/js/bitey.js
           grep -q 'wp_verify_nonce' dist/bitey-ai/includes/class-bitey-api.php
 
-          # Public UI must not expose internal architecture/evaluation/provider language.
           if grep -RqiE 'Aprendiz empresarial|IA externa|Las IAs externas|¿Quieres crear una IA para tu empresa' dist/bitey-ai; then
             echo 'ERROR: internal learning/provider text leaked into the public plugin.'
             exit 1
@@ -63,15 +63,27 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rm -f bitey-ai-wordpress.zip
           (cd dist && zip -r ../bitey-ai-wordpress.zip bitey-ai)
           unzip -t bitey-ai-wordpress.zip
           unzip -l bitey-ai-wordpress.zip
 
-      - name: Upload installable ZIP
+      - name: Upload installable ZIP artifact
         uses: actions/upload-artifact@v4
         with:
           name: bitey-ai-wordpress-${{ github.sha }}
           path: bitey-ai-wordpress.zip
           if-no-files-found: error
           retention-days: 30
+
+      - name: Publish installable ZIP as GitHub Release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="build-${GITHUB_SHA::12}"
+          TITLE="Bitey AI WordPress Plugin ${GITHUB_SHA::12}"
+          gh release create "$TAG" bitey-ai-wordpress.zip \
+            --title "$TITLE" \
+            --notes "Validated installable Bitey AI WordPress plugin built from main at ${GITHUB_SHA}." \
+            --prerelease
