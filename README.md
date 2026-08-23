@@ -1,70 +1,43 @@
-# Bitey AI — WordPress Channel
+# Bitey Plugin Web
 
-**Bitey AI** is the official WordPress communication channel/plugin for the Bitey platform. It is a delivery path for conversations with users; it is deliberately **not** the intelligence core.
+**Bitey Plugin Web** is the WordPress plugin/channel for the Bitey ecosystem. It is installed in WordPress sites such as **BiteFixes.com** and provides the web/widget entry point for the site's authorized BiteFixes AI experience.
 
-## Platform architecture
+It is **not the Bitey IA supracerebro** and it must not become a second intelligence core.
+
+## Architecture
 
 ```text
-WordPress user
+WordPress site
       ↓
-bitey-ai
+Bitey Plugin Web
       ↓
-bitefixes-backend / Bitey IA
+BiteFixes Backend
       ↓
-Company AI Profile + authorized context
-      ↓
-knowledge / memory / intelligent web research / workflows
-      ↓
-external AI collaboration when useful
+BiteFixes AI / Company AI Profile / authorized context
       ↓
 response
 ```
 
-There is one Bitey brain. The same backend intelligence serves WordPress, the public `bitey-web` facade, `bitefixes-app` mobile and future authorized channels.
+The plugin remains a channel and presentation/integration layer. Business intelligence, customer context, memory, services, tickets, company knowledge, tenant rules and operational decisions remain under the BiteFixes backend architecture.
+
+## Product boundaries
+
+- **Bitey IA** — independent web-based supracerebro in `bitey-web`, designed as a complete AI experience comparable in interaction style to ChatGPT or Claude.
+- **Bitey Plugin Web** — this WordPress channel, installed on sites such as BiteFixes.com.
+- **BiteFixes Backend** — specialized brain/infrastructure of BiteFixes.com and its authorized channels. It remains independent and is not merged into Bitey IA.
 
 ## Responsibilities
 
-The plugin transports authorized:
-
-- user messages;
-- conversation/session identity;
-- supported language preference;
-- permitted attachments;
-- channel metadata required by the backend.
-
-The plugin must not become the source of truth for company knowledge, customer memory, business rules or provider credentials. Intelligence orchestration, authorization, Company AI Profile, research, memory and tenant isolation remain server-side.
-
-## Conversation continuity
-
-The channel must preserve conversation identity across turns and pass the stable conversation/session identifier to the backend. Previously established facts must remain available to later turns; the plugin must never reset the conversation merely because a new message was sent.
-
-## Public experience
-
-Users should experience a normal, coherent company assistant. Internal architecture, provider routing, evaluation and private learning mechanisms remain server-side unless intentionally exposed as product functionality.
-
-## Security
-
-- Never expose provider API keys in browser JavaScript.
-- Treat WordPress as an untrusted channel client.
-- Authenticate backend requests.
-- Never allow one tenant's private context to cross into another tenant.
-- Handle attachments and identity metadata only according to backend authorization rules.
+The plugin transports authorized channel data such as user messages, conversation/session identity, language preference, permitted attachments and channel metadata. It must not expose provider API keys or become the source of truth for private company/customer data.
 
 ## Installation
 
-1. Obtain the validated installable ZIP produced by GitHub Actions.
+1. Obtain the validated installable ZIP produced by the repository release workflow.
 2. In WordPress, open **Plugins → Add New → Upload Plugin**.
 3. Upload and activate the ZIP.
-4. Configure the authenticated Bitey backend endpoint and company/tenant settings.
-5. Verify the widget with an end-to-end conversation test.
+4. Configure the authorized BiteFixes backend endpoint and site/company settings.
+5. Run an end-to-end conversation test.
 
-## Repository relationship
+## Naming transition
 
-- `bitefixes-backend` — authoritative Bitey IA and intelligence core.
-- `bitey-ai` — this WordPress channel/plugin.
-- `bitey-web` — public web facade for a ChatGPT-like Bitey experience.
-- `bitefixes-app` — mobile channel for accessing BiteFixes and Bitey.
-
-## Status
-
-Active development. Channel changes should be validated against the shared backend contract and end-to-end conversation tests before production installation.
+The repository is currently named `bitey-ai`. Its intended product name is **Bitey Plugin Web**. A repository-level GitHub rename is still required to change the slug without creating a duplicate repository.
