@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Bitey AI Assistant
+Plugin Name: Bitey Plugin Web
 Plugin URI: https://bitefixes.com
-Description: Bitey AI conversational assistant connected to the Bitey Cloud Gateway, with multilingual chat and secure business context handling.
+Description: Bitey Plugin Web conversational channel for WordPress, connected to the BiteFixes backend with multilingual chat and secure business context handling.
 Version: 2.5.5
 Author: BiteFixes
 Author URI: https://bitefixes.com
