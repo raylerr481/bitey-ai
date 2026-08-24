@@ -1,34 +1,34 @@
-# Bitey AI — Enterprise WordPress Plugin
+# Bitey IA — Enterprise WordPress Plugin
 
-`bitey-ai` is the **global WordPress plugin and enterprise web channel for Bitey AI**.
+`bitey-ai` is the **WordPress plugin and enterprise web channel for Bitey IA**.
 
-Its purpose is to integrate business WordPress sites with authorized Bitey AI enterprise services, providing the website-facing widget, configuration and secure API communication without becoming a second AI brain.
+Its purpose is to integrate authorized business WordPress sites with enterprise Bitey IA services. It is a channel/integration layer, not the Bitey IA supracerebro and not a duplicate enterprise backend.
 
-> **Boundary:** this repository is a WordPress integration/plugin. It is not the general `bitey-web` application, not `bitey-ai-app`, and not a duplicate enterprise backend.
+> **Boundary:** `bitey-web` is the general Bitey IA supracerebro; `bitey-ia-app` is its Android client. This repository is the enterprise WordPress channel.
 
 ## Product role
 
 ```text
 Business WordPress site
         ↓
-Bitey AI Enterprise WordPress Plugin
+Bitey IA Enterprise WordPress Plugin
         ↓
 Authorized Enterprise API
         ↓
-Company AI Profile / knowledge / customer context
+Company context / knowledge / customer context
         ↓
-Reasoning + research + business workflows
+Enterprise reasoning + research + workflows
         ↓
 Business response
 ```
 
-The plugin is the **WordPress channel and integration layer**. Intelligence, private company data, memory, provider credentials, permissions and authoritative business decisions remain server-side.
+The plugin provides the WordPress channel and integration layer. Intelligence, private company data, memory, provider credentials, permissions and authoritative business decisions remain server-side.
 
 ## Responsibilities
 
 - WordPress installation and lifecycle.
-- Bitey AI website widget / entry point.
-- Secure communication with an authorized AI backend/API.
+- Bitey IA website widget / entry point.
+- Secure communication with an authorized enterprise API.
 - Conversation and session transport.
 - Company/site configuration through WordPress admin.
 - Channel metadata and language preferences.
@@ -39,9 +39,9 @@ The plugin is the **WordPress channel and integration layer**. Intelligence, pri
 ## Must NOT live here
 
 - AI provider API keys or private provider secrets.
-- Permanent customer/company memory.
+- Permanent authoritative customer/company memory.
 - Cross-company knowledge.
-- The general Bitey AI reasoning engine.
+- The general Bitey IA supracerebro.
 - A duplicate enterprise backend.
 - BiteFixes-only business logic unless required by an explicit authorized contract.
 
@@ -49,11 +49,12 @@ The plugin is the **WordPress channel and integration layer**. Intelligence, pri
 
 | Repository | Product | Role |
 |---|---|---|
-| `bitey-web` | **Bitey AI Web** | General Bitey AI web application on Cloudflare |
-| `bitey-ai-app` | **Bitey AI App** | General Bitey AI Android application |
-| `bitey-ai` | **Bitey AI Enterprise WordPress Plugin** | This WordPress enterprise channel |
-| `bitefixes-backend` | **BiteFixes Backend** | Specialized BiteFixes enterprise backend/brain |
+| `bitey-web` | **Bitey IA Web** | General Bitey IA supracerebro and Cloudflare web application |
+| `bitey-ia-app` | **Bitey IA App** | General Bitey IA Android application |
+| `bitey-ai` | **Bitey IA Enterprise WordPress Plugin** | This enterprise WordPress channel |
+| `bitefixes-backend` | **BiteFixes Backend** | Specialized BiteFixes enterprise backend/intelligence |
 | `bitefixes-app` | **BiteFixes App** | BiteFixes mobile channel |
+| `bitefixes-web` | **BiteFixes Web** | BiteFixes.com website/frontend |
 
 ## Enterprise tenant model
 
@@ -68,7 +69,7 @@ authorized API request
         ↓
 tenant/company context
         ↓
-response
+enterprise response
 ```
 
 The plugin must never allow one company's private context to leak into another company.
@@ -88,7 +89,7 @@ The plugin must never allow one company's private context to leak into another c
 1. Keep the plugin WordPress-native and modular.
 2. Preserve backward compatibility when practical.
 3. Keep API contracts explicit and versioned.
-4. Do not copy the general Bitey AI intelligence engine into the plugin.
+4. Do not copy the general Bitey IA intelligence engine into the plugin.
 5. Test installation, activation, widget rendering and end-to-end API communication.
 6. Build a validated ZIP before production installation.
 
@@ -102,4 +103,4 @@ The plugin must never allow one company's private context to leak into another c
 
 ## Repository naming
 
-The technical repository slug remains `bitey-ai`. The product role is **Bitey AI Enterprise WordPress Plugin**.
+The technical repository slug remains `bitey-ai`. The product role is **Bitey IA Enterprise WordPress Plugin**.
