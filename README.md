@@ -1,106 +1,79 @@
-# Bitey IA — Enterprise WordPress Plugin
+# Bitey IA — WordPress Plugin
 
 `bitey-ai` is the **WordPress plugin and enterprise web channel for Bitey IA**.
 
-Its purpose is to integrate authorized business WordPress sites with enterprise Bitey IA services. It is a channel/integration layer, not the Bitey IA supracerebro and not a duplicate enterprise backend.
+It is an integration/channel layer. **It is not the Bitey IA Supracerebro.**
 
-> **Boundary:** `bitey-web` is the general Bitey IA supracerebro; `bitey-ia-app` is its Android client. This repository is the enterprise WordPress channel.
-
-## Product role
+## Ecosystem boundary
 
 ```text
-Business WordPress site
-        ↓
-Bitey IA Enterprise WordPress Plugin
-        ↓
-Authorized Enterprise API
-        ↓
-Company context / knowledge / customer context
-        ↓
-Enterprise reasoning + research + workflows
-        ↓
-Business response
+BITEY IA
+  └── bitey-web = Supracerebro
+          │
+          ├── bitey-ia-app = mobile channel
+          │
+          └── bitey-ai = WordPress enterprise channel
 ```
 
-The plugin provides the WordPress channel and integration layer. Intelligence, private company data, memory, provider credentials, permissions and authoritative business decisions remain server-side.
+The plugin connects an authorized WordPress site to the appropriate enterprise API. Intelligence, authoritative memory, private company data, provider credentials and business decisions remain server-side.
 
-## Responsibilities
+## Enterprise role
+
+The plugin provides:
 
 - WordPress installation and lifecycle.
-- Bitey IA website widget / entry point.
-- Secure communication with an authorized enterprise API.
-- Conversation and session transport.
-- Company/site configuration through WordPress admin.
+- Bitey IA widget/entry point.
+- Secure communication with authorized enterprise APIs.
+- Conversation/session transport.
+- Site/company configuration.
 - Channel metadata and language preferences.
 - Front-end assets and enterprise widget UX.
 - Localization and WordPress compatibility.
-- Safe handling of authorized requests and attachments.
 
-## Must NOT live here
+## Bitey IA Empresarial
 
-- AI provider API keys or private provider secrets.
-- Permanent authoritative customer/company memory.
-- Cross-company knowledge.
-- The general Bitey IA supracerebro.
+For authorized business deployments, the plugin can expose the **Bitey IA Empresarial** experience. Bitey IA Empresarial maintains Bitey IA's architecture and capabilities while operating with the authorized business context supplied by the enterprise backend.
+
+Within BiteFixes, that context can include CRM, customers, tickets, services, knowledge and workflows. BiteFixes operational/private context remains scoped to authorized BiteFixes flows.
+
+## Must not live in the plugin
+
+- Provider API keys or private provider secrets.
+- Authoritative permanent company memory.
+- Cross-company private knowledge.
+- The general Bitey IA Supracerebro.
 - A duplicate enterprise backend.
-- BiteFixes-only business logic unless required by an explicit authorized contract.
+- Unnecessary BiteFixes-only business logic.
 
 ## Ecosystem
 
 | Repository | Product | Role |
 |---|---|---|
-| `bitey-web` | **Bitey IA Web** | General Bitey IA supracerebro and Cloudflare web application |
-| `bitey-ia-app` | **Bitey IA App** | General Bitey IA Android application |
-| `bitey-ai` | **Bitey IA Enterprise WordPress Plugin** | This enterprise WordPress channel |
-| `bitefixes-backend` | **BiteFixes Backend** | Specialized BiteFixes enterprise backend/intelligence |
+| `bitey-web` | **Bitey IA Web** | General Bitey IA Supracerebro/web channel |
+| `bitey-ia-app` | **Bitey IA App** | Mobile channel of the same Bitey IA |
+| `bitey-ai` | **Bitey IA WordPress Plugin** | This WordPress enterprise channel |
+| `JobIA` | **JobIA** | Employment/opportunity product |
+| `bitey-trainer` | **Bitey Trainer** | Internal intelligence engine of JobIA; not an app |
+| `bitey-system-bots-trading` | **Bitey System Bots Trading** | Independent trading module |
+| `bitey-system-bots-trading-app` | **Bitey SBT App** | Mobile app for the trading module |
+| `bitefixes-backend` | **BiteFixes Backend** | Specialized enterprise backend |
+| `bitefixes-web` | **BiteFixes Web** | BiteFixes website/frontend |
 | `bitefixes-app` | **BiteFixes App** | BiteFixes mobile channel |
-| `bitefixes-web` | **BiteFixes Web** | BiteFixes.com website/frontend |
-
-## Enterprise tenant model
-
-Each WordPress installation represents an authorized company/site context.
-
-```text
-WordPress site / tenant
-        ↓
-plugin configuration
-        ↓
-authorized API request
-        ↓
-tenant/company context
-        ↓
-enterprise response
-```
-
-The plugin must never allow one company's private context to leak into another company.
 
 ## Security rules
 
 1. Keep provider credentials server-side.
 2. Authenticate and authorize backend requests.
-3. Validate all inbound and outbound data.
+3. Validate all inbound/outbound data.
 4. Never trust browser-supplied tenant identity without server validation.
-5. Do not store authoritative company memory in WordPress front-end state.
+5. Do not store authoritative company memory in front-end state.
 6. Keep secrets out of JavaScript bundles and public configuration.
-7. Add regression tests for security-sensitive changes.
-
-## Development rules
-
-1. Keep the plugin WordPress-native and modular.
-2. Preserve backward compatibility when practical.
-3. Keep API contracts explicit and versioned.
-4. Do not copy the general Bitey IA intelligence engine into the plugin.
-5. Test installation, activation, widget rendering and end-to-end API communication.
-6. Build a validated ZIP before production installation.
+7. Keep enterprise context isolated by tenant and authorization.
 
 ## Installation
 
-1. Build the validated plugin ZIP.
-2. In WordPress, open **Plugins → Add New → Upload Plugin**.
-3. Upload and activate the ZIP.
-4. Configure the authorized enterprise API and company/site settings.
-5. Test a complete conversation from the WordPress widget to the authorized backend and back.
-
-## Repository naming
-
-The technical repository slug remains `bitey-ai`. The product role is **Bitey IA Enterprise WordPress Plugin**.
+1. Build a validated plugin ZIP.
+2. In WordPress open **Plugins → Add New → Upload Plugin**.
+3. Upload and activate.
+4. Configure the authorized enterprise API and site/company settings.
+5. Test a complete widget → API → enterprise response flow.
