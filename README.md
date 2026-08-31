@@ -1,66 +1,60 @@
 # Bitey IA — WordPress Plugin
 
-`bitey-ai` is the **WordPress plugin and enterprise web channel for Bitey IA**.
+`bitey-ai` is the **WordPress integration and configurable Web channel for Bitey IA CRM SaaS**.
 
-It is an integration/channel layer. **It is not the Bitey IA Supracerebro.**
+It is an integration/channel layer. The intelligence, authoritative memory, private company data, credentials and business rules remain server-side.
 
-## Ecosystem boundary
+## Customer Web channel
+
+The plugin provides the configurable web Bitey widget/globe. Together with WhatsApp and Telegram, it forms the three primary customer channels:
 
 ```text
-BITEY IA
-  └── bitey-web = Supracerebro
-          │
-          ├── bitey-ia-app = mobile channel
-          │
-          └── bitey-ai = WordPress enterprise channel
+WhatsApp ─┐
+Telegram ─┼──> Bitey Conversation Engine ──> CRM + IA + Memory
+Web globe ┘
 ```
 
-The plugin connects an authorized WordPress site to the appropriate enterprise API. Intelligence, authoritative memory, private company data, provider credentials and business decisions remain server-side.
+The plugin does not replace the private Support Portal. For the BiteFixes pilot, the Portal remains an authenticated workspace for owner/admin/technician/worker personnel. Customers do not use that administrative login.
+
+## SaaS tenant model
+
+BiteFixes is the first production tenant. The plugin is being improved to work for other companies without duplicating the backend.
+
+Tenant-facing configuration can include:
+
+- company/display name
+- assistant name
+- logo/avatar
+- colors and visual identity
+- welcome message
+- language and currency
+- authorized backend/company identifier
+- enabled Web channel configuration
+
+The internal intelligence engine may remain named **Bitey**, while the visible assistant can be branded differently for each customer deployment.
 
 ## Enterprise role
 
 The plugin provides:
 
 - WordPress installation and lifecycle.
-- Bitey IA widget/entry point.
+- Configurable Bitey widget/entry point.
 - Secure communication with authorized enterprise APIs.
 - Conversation/session transport.
 - Site/company configuration.
 - Channel metadata and language preferences.
-- Front-end assets and enterprise widget UX.
+- Front-end assets and widget UX.
 - Localization and WordPress compatibility.
-
-## Bitey IA Empresarial
-
-For authorized business deployments, the plugin can expose the **Bitey IA Empresarial** experience. Bitey IA Empresarial maintains Bitey IA's architecture and capabilities while operating with the authorized business context supplied by the enterprise backend.
-
-Within BiteFixes, that context can include CRM, customers, tickets, services, knowledge and workflows. BiteFixes operational/private context remains scoped to authorized BiteFixes flows.
 
 ## Must not live in the plugin
 
 - Provider API keys or private provider secrets.
 - Authoritative permanent company memory.
 - Cross-company private knowledge.
-- The general Bitey IA Supracerebro.
 - A duplicate enterprise backend.
 - Unnecessary BiteFixes-only business logic.
 
-## Ecosystem
-
-| Repository | Product | Role |
-|---|---|---|
-| `bitey-web` | **Bitey IA Web** | General Bitey IA Supracerebro/web channel |
-| `bitey-ia-app` | **Bitey IA App** | Mobile channel of the same Bitey IA |
-| `bitey-ai` | **Bitey IA WordPress Plugin** | This WordPress enterprise channel |
-| `JobIA` | **JobIA** | Employment/opportunity product |
-| `bitey-trainer` | **Bitey Trainer** | Internal intelligence engine of JobIA; not an app |
-| `bitey-system-bots-trading` | **Bitey System Bots Trading** | Independent trading module |
-| `bitey-system-bots-trading-app` | **Bitey SBT App** | Mobile app for the trading module |
-| `bitefixes-backend` | **BiteFixes Backend** | Specialized enterprise backend |
-| `bitefixes-web` | **BiteFixes Web** | BiteFixes website/frontend |
-| `bitefixes-app` | **BiteFixes App** | BiteFixes mobile channel |
-
-## Security rules
+## Security
 
 1. Keep provider credentials server-side.
 2. Authenticate and authorize backend requests.
@@ -70,10 +64,14 @@ Within BiteFixes, that context can include CRM, customers, tickets, services, kn
 6. Keep secrets out of JavaScript bundles and public configuration.
 7. Keep enterprise context isolated by tenant and authorization.
 
+## Compatibility principle
+
+The existing BiteFixes integration is preserved. SaaS generalization is additive: existing endpoints, widget behavior and backend architecture continue to work while tenant branding and configuration are introduced.
+
 ## Installation
 
 1. Build a validated plugin ZIP.
 2. In WordPress open **Plugins → Add New → Upload Plugin**.
 3. Upload and activate.
-4. Configure the authorized enterprise API and site/company settings.
-5. Test a complete widget → API → enterprise response flow.
+4. Configure the authorized enterprise API and tenant/site settings.
+5. Test Web widget → API → CRM/IA response flow.
