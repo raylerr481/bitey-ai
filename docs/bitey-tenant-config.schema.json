@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bitey Tenant Assistant Configuration",
+  "type": "object",
+  "required": ["tenant_id", "assistant"],
+  "properties": {
+    "tenant_id": {"type": "string", "minLength": 1},
+    "assistant": {
+      "type": "object",
+      "required": ["name", "welcome_message", "language"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 80},
+        "display_name": {"type": "string", "maxLength": 120},
+        "welcome_message": {"type": "string", "maxLength": 1000},
+        "language": {"type": "string", "maxLength": 16},
+        "personality": {"type": "string", "maxLength": 80},
+        "avatar_url": {"type": "string", "format": "uri"},
+        "logo_url": {"type": "string", "format": "uri"},
+        "primary_color": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
