@@ -44,7 +44,7 @@ class Bitey_API {
             'phone'=>isset($source['phone'])?sanitize_text_field(wp_unslash($source['phone'])):'',
             'email'=>isset($source['email'])?sanitize_email(wp_unslash($source['email'])):'',
             'company_id'=>absint(get_option('bitey_company_id',1))?:1,
-            'channel'=>isset($source['channel'])?sanitize_key(wp_unslash($source['channel'])):'website',
+            'channel'=>'website',
             'conversation_id'=>isset($source['conversation_id'])?sanitize_key(wp_unslash($source['conversation_id'])):'',
             'language_preference'=>$this->normalize_language(isset($source['language_preference'])?wp_unslash($source['language_preference']):'auto'),
             'preferred_contact_channel'=>isset($source['preferred_contact_channel'])?sanitize_key(wp_unslash($source['preferred_contact_channel'])):''
@@ -52,6 +52,7 @@ class Bitey_API {
     }
 
     private function backend_url() { return untrailingslashit((string)get_option('bitey_backend_url','https://bitefixes-backend.onrender.com')); }
+    private function business_endpoint() { return $this->backend_url().'/chat/business'; }
     private function channel_key() { return trim((string)get_option('bitey_channel_api_key','')); }
 
     private function parse_backend_response($response) {
@@ -68,7 +69,21 @@ class Bitey_API {
         if($data['message']==='') return new WP_Error('empty_message','Escribe un mensaje para continuar.');
         $headers=array('Accept'=>'application/json','Content-Type'=>'application/json');
         if($this->channel_key()!=='') $headers['X-Bitey-Channel-Key']=$this->channel_key();
-        $response=wp_remote_post($this->backend_url().'/chat',array('timeout'=>45,'headers'=>$headers,'body'=>wp_json_encode(array('message'=>$data['message'],'phone'=>$data['phone'],'email'=>$data['email'],'company_id'=>$data['company_id'],'customer_name'=>trim($data['name'].' '.$data['last_name'])?:'Customer','channel'=>$data['channel']?:'website','conversation_id'=>$data['conversation_id'],'language_preference'=>$data['language_preference'],'preferred_contact_channel'=>$data['preferred_contact_channel']))));
+        $payload=array(
+            'message'=>$data['message'],
+            'phone'=>$data['phone'],
+            'email'=>$data['email'],
+            'company_id'=>$data['company_id'],
+            'customer_name'=>trim($data['name'].' '.$data['last_name'])?:'Customer',
+            'channel'=>'website',
+            'conversation_id'=>$data['conversation_id'],
+            'language_preference'=>$data['language_preference'],
+            'preferred_contact_channel'=>$data['preferred_contact_channel'],
+            'product'=>'bitey-enterprise',
+            'context_scope'=>'bitefixes',
+            'source'=>'wordpress'
+        );
+        $response=wp_remote_post($this->business_endpoint(),array('timeout'=>45,'headers'=>$headers,'body'=>wp_json_encode($payload)));
         $body=$this->parse_backend_response($response);
         if(is_wp_error($body)) return $body;
         $reply=$body['response']??$body['reply']??$body['message']??'';
