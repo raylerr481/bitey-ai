@@ -60,6 +60,18 @@ The backend remains authoritative for tenant identity, authorization, private da
 4. Do not expose private CRM/company data to unauthorized clients.
 5. Keep authoritative memory and business rules in backend systems.
 
+## Infrastructure and cost policy
+
+Bitey/BiteFixes follows a **free-first, no-surprise-cost architecture**.
+
+- Prefer free services, open-source software, or free tiers without automatic billing risk.
+- Do not add providers requiring a payment card merely to start or capable of unexpected entry/egress, API, traffic, storage, or execution charges.
+- **Railway is explicitly excluded** from BiteFixes/Bitey infrastructure.
+- Cloudflare is permitted when the free tier is sufficient and any later cost occurs only after a clearly defined usage threshold; no paid plan or automatic billing may be enabled without explicit approval.
+- Every new service must be checked for pricing, billing behavior, limits, card requirements, and overage behavior before adoption.
+- If a service can generate costs without an explicit decision first, use a safer alternative.
+- This policy is documentation-only and does not modify existing working integrations.
+
 ## Compatibility
 
 Existing BiteFixes WordPress integration remains the compatibility target. Generalization is additive and must not move BiteFixes CRM/SaaS ownership into this plugin or into Bitey IA Web.
